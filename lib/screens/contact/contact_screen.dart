@@ -11,7 +11,7 @@ class ContactScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: primaryColor,
         leading: Icon(Icons.search),
-        actions: [IconButton(onPressed: (){}, icon: Icon(Icons.add_alert))],
+        actions: [IconButton(onPressed: (){}, icon: Icon(Icons.person_add_alt_sharp))],
         title: const TextField(
         ),
       ),
