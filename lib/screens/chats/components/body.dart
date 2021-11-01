@@ -22,29 +22,38 @@ class Body extends StatelessWidget {
           ),
         ),
         Expanded(child:
-          ListView(
-            children:  [
-              InkWell(
-                onTap: (){
-                  Navigator.pushNamed(context, "/message");
-                },
-                child: ListTile(
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20)
+              )
+            ),
+            child: ListView(
+              children:  [
+                InkWell(
+                  onTap: (){
+                    Navigator.pushNamed(context, "/message");
+                  },
+                  child: ListTile(
+                    leading: Icon(Icons.account_circle, size: 40,),
+                    title: Text("Tên người dùng"),
+                    subtitle: Text("Tin nhắn gần đây"),
+                  ),
+                ),
+                ListTile(
                   leading: Icon(Icons.account_circle, size: 40,),
                   title: Text("Tên người dùng"),
                   subtitle: Text("Tin nhắn gần đây"),
                 ),
-              ),
-              ListTile(
-                leading: Icon(Icons.account_circle, size: 40,),
-                title: Text("Tên người dùng"),
-                subtitle: Text("Tin nhắn gần đây"),
-              ),
-              ListTile(
-                leading: Icon(Icons.account_circle, size: 40,),
-                title: Text("Tên người dùng"),
-                subtitle: Text("Tin nhắn gần đây"),
-              )
-            ],
+                ListTile(
+                  leading: Icon(Icons.account_circle, size: 40,),
+                  title: Text("Tên người dùng"),
+                  subtitle: Text("Tin nhắn gần đây"),
+                )
+              ],
+            ),
           ))
       ],
     );

@@ -9,6 +9,7 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: primaryColor,
       appBar: buildAppBar(),
       body: Body(),
     );
@@ -16,6 +17,7 @@ class ChatScreen extends StatelessWidget {
 
   AppBar buildAppBar() {
     return AppBar(
+      automaticallyImplyLeading: false,
       backgroundColor: primaryColor,
       title: Text("Chat"),
       elevation: 0,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
+import 'package:halo/screens/newfeed/components/body.dart';
 
 class NewFeedScreen extends StatelessWidget {
   const NewFeedScreen({Key? key}) : super(key: key);
@@ -7,9 +8,9 @@ class NewFeedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-
-      ),
+      backgroundColor: backgroundColor,
+      body: Body(),
     );
   }
 }
+
