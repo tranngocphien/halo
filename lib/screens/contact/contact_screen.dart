@@ -63,15 +63,17 @@ class ContactScreen extends StatelessWidget {
               ),
             ),
             Container(
-              child: Column (
-                children: [
-                  Friend(),
-                  Friend(),
-                  Friend(),
-                  Friend(),
-                  Friend(),
-                  Friend(),
-                ],
+              child: Expanded(
+                child: ListView (
+                  children: [
+                    Friend(),
+                    Friend(),
+                    Friend(),
+                    Friend(),
+                    Friend(),
+                    Friend(),
+                  ],
+                ),
               )
             )
 

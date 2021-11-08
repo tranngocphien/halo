@@ -8,15 +8,15 @@ import '../../../constants.dart';
 class PostItem extends StatelessWidget {
   final Post post;
   const PostItem({
-    Key? key, required this.post,
+    Key? key,
+    required this.post,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onDoubleTap: (){
+      onLongPress: () {
         Navigator.pushNamed(context, "/postdetail");
-
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
@@ -45,8 +45,8 @@ class PostItem extends StatelessWidget {
                         Row(children: [
                           Text(
                             "10 phút",
-                            style:
-                                TextStyle(color: Colors.grey[500], fontSize: 12),
+                            style: TextStyle(
+                                color: Colors.grey[500], fontSize: 12),
                           ),
                           SizedBox(
                             width: 4,
@@ -66,48 +66,54 @@ class PostItem extends StatelessWidget {
               SizedBox(
                 height: 4,
               ),
-              post.content == null? Container():
-              Text(
-                "${post.content}",
-                style: TextStyle(fontSize: 16),
-              ),
+              post.content == null
+                  ? Container()
+                  : Text(
+                      "${post.content}",
+                      style: TextStyle(fontSize: 16),
+                    ),
               SizedBox(
                 height: 4,
               ),
               Image.asset("assets/images/profile_avatar.jpg"),
-              SizedBox(height: 8,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: primaryColor,
-                      shape: BoxShape.circle
+              SizedBox(
+                height: 8,
+              ),
+              Container(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                          color: primaryColor, shape: BoxShape.circle),
+                      child: Icon(
+                        Icons.thumb_up,
+                        color: Colors.white,
+                        size: 16,
+                      ),
                     ),
-                    child: Icon(
-                      Icons.thumb_up,
-                      color: Colors.white,
-                      size: 16,
+                    SizedBox(width: 10,),
+                    Text("12", style: TextStyle( fontSize: 16),),
+                    SizedBox(width: 10,),
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                          color: primaryColor, shape: BoxShape.circle),
+                      child: Icon(
+                        Icons.messenger_rounded,
+                        color: Colors.white,
+                        size: 16,
+                      ),
                     ),
-                  ),
-                  Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Icon(Icons.thumb_up),
-                      Icon(Icons.comment),
-                      Icon(Icons.share)
-                    ],
-
-                  )
-                ],
-              )
+                    SizedBox(width: 10,),
+                    Text("12", style: TextStyle( fontSize: 16),),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
   }
-
 }
