@@ -6,6 +6,7 @@ import 'package:halo/screens/main/main_screen.dart';
 import 'package:halo/screens/message/message_screen.dart';
 import 'package:halo/screens/newfeed/newfeed_screen.dart';
 import 'package:halo/screens/newpost/new_post_screen.dart';
+import 'package:halo/screens/newpost/post_detail.dart';
 import 'package:halo/screens/register/error_screen.dart';
 import 'package:halo/screens/register/register_screen.dart';
 
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/chatspage' : (context) => const ChatScreen(),
         '/message' : (context) => const MessageScreen(),
         '/newpost': (context) => const NewPost(),
+        '/postdetail': (context) => const PostDetailScreen(),
         '/main' : (context) => MainScreen()
       },
       theme: ThemeData(
