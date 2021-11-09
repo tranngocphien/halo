@@ -133,6 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
         });
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('token', jsonResponse['token']);
+        prefs.setString('userId', jsonResponse['data']['id']);
 
         Navigator.pushNamed(context, "/main");
       }
