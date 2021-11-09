@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:halo/components/circle_avatar.dart';
 import 'package:halo/constants.dart';
+import 'package:halo/models/post.dart';
 
-class PostDetailScreen extends StatelessWidget {
-  const PostDetailScreen({Key? key}) : super(key: key);
+class PostDetailScreen extends StatefulWidget {
+  final Post post;
+  const PostDetailScreen({Key? key, required this.post}) : super(key: key);
 
+  @override
+  State<PostDetailScreen> createState() => _PostDetailScreenState();
+}
+
+class _PostDetailScreenState extends State<PostDetailScreen> {
+
+  @override
+  void initState() {
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,44 +25,50 @@ class PostDetailScreen extends StatelessWidget {
         title: Text("Bình luận"),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ProfileAvatar(),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Phiên",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w800),
-                          ),
-                          Row(children: [
+                    Row(
+                      children: [
+                        ProfileAvatar(),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Text(
-                              "10 phút",
+                              "${widget.post.username}",
                               style: TextStyle(
-                                  color: Colors.grey[500], fontSize: 12),
+                                  fontSize: 16, fontWeight: FontWeight.w800),
                             ),
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Icon(
-                              Icons.public,
-                              color: Colors.grey[500],
-                              size: 12,
-                            )
-                          ])
-                        ],
-                      ),
+                            Row(children: [
+                              Text(
+                                "10 phút",
+                                style: TextStyle(
+                                    color: Colors.grey[500], fontSize: 12),
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Icon(
+                                Icons.public,
+                                color: Colors.grey[500],
+                                size: 12,
+                              )
+                            ])
+                          ],
+                        ),
+                      ],
                     ),
                     IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz))
                   ],
@@ -59,17 +77,19 @@ class PostDetailScreen extends StatelessWidget {
                   height: 16,
                 ),
                 Text(
-                  "Chào các bạn",
+                  "${widget.post.content}",
                   style: TextStyle(fontSize: 20),
                 ),
                 SizedBox(
                   height: 16,
                 ),
-                Image.asset("assets/images/profile_avatar.jpg"),
+                // Image.asset("assets/images/profile_avatar.jpg"),
                 SizedBox(
                   height: 8,
                 ),
-                Divider(thickness: 1,),
+                Divider(
+                  thickness: 1,
+                ),
                 Row(
                   children: [
                     Container(
@@ -82,15 +102,24 @@ class PostDetailScreen extends StatelessWidget {
                         size: 16,
                       ),
                     ),
-                    SizedBox(width: 10,),
-                    Text("12", style: TextStyle( fontSize: 16),),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "0",
+                      style: TextStyle(fontSize: 16),
+                    ),
                   ],
                 ),
-                Divider(thickness: 1,),
+                Divider(
+                  thickness: 1,
+                ),
                 Text("Hãy là người đầu tiên bình luận")
               ],
+                ),
+              ),
             ),
-          )),
+          ),
           Container(
             padding: EdgeInsets.all(kDefaultPadding / 2),
             child: SafeArea(
