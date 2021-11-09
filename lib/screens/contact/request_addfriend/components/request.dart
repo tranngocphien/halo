@@ -11,9 +11,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../contact_screen.dart';
 
 
-class Request extends StatelessWidget {
+class Request extends StatefulWidget {
   final RQFriend rqFriend;
+
   const Request({Key? key, required this.rqFriend}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _Request(rqFriend);
+}
+class _Request extends State<Request> {
+
+  final RQFriend rqFriend;
+
+  String deleteButtonText = "Xóa";
+  String acceptButtonText = "Xác nhận";
+  Color acceptionButtonColor = Colors.lightBlue;
+
+  _Request(this.rqFriend);
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +46,8 @@ class Request extends StatelessWidget {
                   backgroundImage: AssetImage("assets/images/profile_avatar.jpg"),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: Text(rqFriend.username, style: TextStyle(fontSize: 20)),
+                  padding: EdgeInsets.only(left: 15.0),
+                  child: Text(rqFriend.username, style: TextStyle(fontSize: 25)),
                 ),
               ],
             ),
@@ -44,6 +58,7 @@ class Request extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 10),
                   child: GestureDetector(
+
                     onTap: () async {
                       print("request add friend");
                       final prefs = await SharedPreferences.getInstance();
@@ -61,16 +76,23 @@ class Request extends StatelessWidget {
                           body: data);
 
                       print(response.body);
-
-
+                      if(response.statusCode == 200) {
+                        setState(() {
+                          acceptButtonText = "Bạn bè";
+                          acceptionButtonColor = Colors.green;
+                        });
+                      }
                     },
                     child: Container(
+                      alignment: Alignment.center,
                         padding: const EdgeInsets.all(7.0),
                         decoration: BoxDecoration(
-                          color: Colors.lightBlue,
+                          color: acceptionButtonColor,
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        child: const Text('Xác nhận', style: TextStyle(color: Colors.white),)
+                        child: Text(acceptButtonText, style: const TextStyle(color: Colors.white)),
+                      width: 80,
+                      height: 33
                     ),
                   ),
                 ),
@@ -78,15 +100,19 @@ class Request extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 15),
                   child: GestureDetector(
                     onTap: (){
-                      print("addfiend");
+                        this.setState(() {
+                        });
                     },
                     child: Container(
+                      alignment: Alignment.center,
                         padding: const EdgeInsets.all(7.0),
                         decoration: BoxDecoration(
                           color: Color(0x00FFA0A2A3),
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        child: const Text('Xóa')
+                        width: 50,
+                        height: 33,
+                        child: Text(deleteButtonText)
                     ),
                   ),
                 )
