@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:halo/screens/contact/contact_screen.dart';
 
 class Friend extends StatelessWidget {
-  const Friend({Key? key}) : super(key: key);
+  final UFriend friend;
+
+  const Friend({Key? key, required this.friend}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,7 @@ class Friend extends StatelessWidget {
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 10.0),
-                      child: Text("Tên người dùng", style: TextStyle(fontSize: 23)),
+                      child: Text(friend.username, style: TextStyle(fontSize: 23)),
                     ),
                   ],
                 ),
