@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(hintText: "Số điện thoại"),
                   validator: (value){
-                    if(value!.length != 10){
+                    if(value!.length < 5){
                       return "Số điện thoại không hợp lệ";
                     }
                     if (value == null || value.isEmpty) {

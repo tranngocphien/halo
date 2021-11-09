@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
         '/chatspage' : (context) => const ChatScreen(),
         '/message' : (context) => const MessageScreen(),
         '/newpost': (context) => const NewPost(),
-        '/postdetail': (context) => const PostDetailScreen(),
         '/main' : (context) => MainScreen(),
         '/requestsAddFriend' : (context) => RequestsAddFriendsScreen()
       },

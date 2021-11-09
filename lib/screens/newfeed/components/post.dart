@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:halo/components/circle_avatar.dart';
 import 'package:halo/models/post.dart';
+import 'package:halo/screens/newpost/post_detail.dart';
 
 import '../../../constants.dart';
 
@@ -16,7 +17,8 @@ class PostItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: () {
-        Navigator.pushNamed(context, "/postdetail");
+        Navigator.push(context, MaterialPageRoute(builder: (context) => PostDetailScreen(post: post)),
+        );
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
@@ -75,7 +77,7 @@ class PostItem extends StatelessWidget {
               SizedBox(
                 height: 4,
               ),
-              Image.asset("assets/images/profile_avatar.jpg"),
+              // Image.asset("assets/images/profile_avatar.jpg"),
               SizedBox(
                 height: 8,
               ),
@@ -93,7 +95,7 @@ class PostItem extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 10,),
-                    Text("12", style: TextStyle( fontSize: 16),),
+                    Text("0", style: TextStyle( fontSize: 16),),
                     SizedBox(width: 10,),
                     Container(
                       padding: const EdgeInsets.all(6),
@@ -106,7 +108,7 @@ class PostItem extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 10,),
-                    Text("12", style: TextStyle( fontSize: 16),),
+                    Text("${post.countComments}", style: TextStyle( fontSize: 16),),
                   ],
                 ),
               ),
