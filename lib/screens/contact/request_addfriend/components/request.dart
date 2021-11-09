@@ -56,7 +56,7 @@ class Request extends StatelessWidget {
                         "is_accept" : "1"
                       };
                       print(data);
-                      final response = await http.post(Uri.parse('http://192.168.1.9:8000/api/v1/friends/set-accept)'),
+                      final response = await http.post(Uri.parse('http://192.168.1.9:8000/api/v1/friends/set-accept'),
                           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
                           body: data);
 
