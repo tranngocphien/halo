@@ -31,7 +31,9 @@ class _ContactState extends State<ContactScreen> {
       appBar: AppBar(
         backgroundColor: primaryColor,
         leading: Icon(Icons.search),
-        actions: [IconButton(onPressed: (){}, icon: Icon(Icons.person_add_alt_sharp))],
+        actions: [IconButton(onPressed: (){
+          Navigator.pushNamed(context, "/searchFriend");
+        }, icon: Icon(Icons.person_add_alt_sharp))],
         title: const TextField(
         ),
       ),
