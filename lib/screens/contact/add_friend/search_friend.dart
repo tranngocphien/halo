@@ -21,6 +21,8 @@ class SearchFriendScreen extends StatefulWidget {
 class _SearchFriend extends State<SearchFriendScreen> {
   final _phoneNumber = TextEditingController();
 
+  bool loading = false;
+
    late Future<List<UFriend>> futureSearchFriend;
 
   @override
@@ -47,6 +49,7 @@ class _SearchFriend extends State<SearchFriendScreen> {
         ),
       body: Center(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Padding(
               padding: EdgeInsets.only(top: 20, left: 15),
@@ -59,6 +62,12 @@ class _SearchFriend extends State<SearchFriendScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _phoneNumber,
+                      style: TextStyle(fontSize: 20),
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        hintText: "Nhập số điện thoại"
+                      ),
+                      textAlign: TextAlign.center,
 
                     ),
                   ),
@@ -66,11 +75,22 @@ class _SearchFriend extends State<SearchFriendScreen> {
                     padding: const EdgeInsets.only(left: 15),
                     child: RaisedButton (
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      onPressed: () {
+                      onPressed: () async {
                         print(_phoneNumber.text);
+
                         setState(() {
-                          futureSearchFriend = fetchSearchFriends(_phoneNumber.text);
+                          loading = true;
                         });
+
+                        futureSearchFriend = fetchSearchFriends(_phoneNumber.text).whenComplete(() => setState(() {
+                          loading = false;
+                        }));
+                          // setState(() {
+                          //   futureSearchFriend = future;
+                          //   //loading = false;
+                          // });
+
+
                       },
                       child: Text("Tìm", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500)),
                       color: primaryColor,
@@ -79,20 +99,22 @@ class _SearchFriend extends State<SearchFriendScreen> {
                 ],
               ),
             ),
-            FutureBuilder<List<UFriend>>(
-                future: futureSearchFriend,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Expanded(
-                      child: ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            return FriendComponent(friend: snapshot.data![index]);
-                          }),
-                    );
-                  }
-                  return Center(child: CircularProgressIndicator());
-                })
+            Container(
+              child: loading == true ? CircularProgressIndicator() : FutureBuilder<List<UFriend>>(
+                  future: futureSearchFriend,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Expanded(
+                        child: ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              return FriendComponent(friend: snapshot.data![index]);
+                            }),
+                      );
+                    }
+                    return Center(child: CircularProgressIndicator());
+                  }),
+            )
           ],
         ),
       ),
