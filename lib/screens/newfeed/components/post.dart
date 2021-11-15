@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -9,8 +10,9 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../constants.dart';
+import 'icon_interact.dart';
 
-class PostItem extends StatelessWidget {
+class PostItem extends StatefulWidget {
   final Post post;
   const PostItem({
     Key? key,
@@ -18,13 +20,20 @@ class PostItem extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<PostItem> createState() => _PostItemState();
+}
+
+class _PostItemState extends State<PostItem> {
+  var isDeleted = false;
+
+  @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return GestureDetector(
+    return isDeleted? Container(): GestureDetector(
       onLongPress: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PostDetailScreen(post: post)),
+          MaterialPageRoute(builder: (context) => PostDetailScreen(post: widget.post)),
         );
       },
       child: Container(
@@ -38,7 +47,7 @@ class PostItem extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  ProfileAvatar(),
+                  ProfileAvatar(size: 24,),
                   SizedBox(
                     width: 8,
                   ),
@@ -47,7 +56,7 @@ class PostItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${post.username}",
+                          "${widget.post.username}",
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w800),
                         ),
@@ -79,32 +88,23 @@ class PostItem extends StatelessWidget {
               SizedBox(
                 height: 4,
               ),
-              post.content == null
+              widget.post.content == null
                   ? Container()
                   : Text(
-                      "${post.content}",
+                      "${widget.post.content}",
                       style: TextStyle(fontSize: 16),
                     ),
               SizedBox(
                 height: 4,
               ),
-              // Image.asset("assets/images/profile_avatar.jpg"),
+              Image.asset("assets/images/profile_avatar.jpg"),
               SizedBox(
                 height: 8,
               ),
               Container(
                 child: Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                          color: primaryColor, shape: BoxShape.circle),
-                      child: Icon(
-                        Icons.thumb_up,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    ),
+                    IconLike(isClicked: widget.post.isLike,postId: widget.post.id,),
                     SizedBox(
                       width: 10,
                     ),
@@ -118,7 +118,7 @@ class PostItem extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                          color: primaryColor, shape: BoxShape.circle),
+                          color: Colors.grey[500], shape: BoxShape.circle),
                       child: Icon(
                         Icons.messenger_rounded,
                         color: Colors.white,
@@ -129,7 +129,7 @@ class PostItem extends StatelessWidget {
                       width: 10,
                     ),
                     Text(
-                      "${post.countComments}",
+                      "${widget.post.countComments}",
                       style: TextStyle(fontSize: 16),
                     ),
                   ],
@@ -175,9 +175,17 @@ class PostItem extends StatelessWidget {
                     const SizedBox(width: 20,),
                     TextButton(
                         onPressed: () {
-                          deletePost(post.id, context).then((value) {
+                          deletePost(widget.post.id, context).then((value) {
                             Navigator.pop(context);
                             if(value.statusCode == 200){
+                              setState(() {
+                                isDeleted = true;
+                              });
+                              showSnackBar("Xóa thành công");
+                            }
+                            else {
+                              var jsonResponse = json.decode(value.body);
+                              showSnackBar(jsonResponse["message"]);
 
                             }
 
@@ -218,6 +226,10 @@ class PostItem extends StatelessWidget {
     );
   }
 
+  void showSnackBar(String content){
+    final snackbar = SnackBar(content: Text(content));
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
+  }
 
   Future<http.Response> deletePost(String postId, BuildContext context) async {
     var url = "http://192.168.1.9:8000/api/v1/posts/delete/${postId}";
@@ -225,4 +237,7 @@ class PostItem extends StatelessWidget {
     final token = prefs.getString('token') ?? "";
     return await http.get(Uri.parse(url), headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
   }
+
 }
+
+

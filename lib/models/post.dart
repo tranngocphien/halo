@@ -8,6 +8,7 @@ class Post {
   // final List<dynamic> videos;
   // final String createAt;
   // final String updateAt;
+  final bool isLike;
   final int countComments;
 
   Post(
@@ -16,6 +17,7 @@ class Post {
       // required this.videos,
       // required this.createAt,
       // required this.updateAt,
+        required this.isLike,
       required this.countComments
   });
 
@@ -27,6 +29,7 @@ class Post {
       // videos: json["videos"],
       // createAt: json["createdAt"],
       // updateAt: json["updatedAt"],
+      isLike: json["isLike"],
       countComments: json["countComments"]
   );
 

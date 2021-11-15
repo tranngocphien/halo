@@ -69,7 +69,7 @@ class _BodyState extends State<Body> {
             decoration: BoxDecoration(color: whiteColor),
             child: Row(
               children: [
-                ProfileAvatar(),
+                ProfileAvatar(size: 24,),
                 SizedBox(
                   width: kDefaultPadding,
                 ),
