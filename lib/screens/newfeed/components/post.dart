@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:halo/components/circle_avatar.dart';
 import 'package:halo/models/post.dart';
 import 'package:halo/screens/newpost/post_detail.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../constants.dart';
 
@@ -15,9 +19,12 @@ class PostItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return GestureDetector(
       onLongPress: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => PostDetailScreen(post: post)),
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PostDetailScreen(post: post)),
         );
       },
       child: Container(
@@ -62,7 +69,11 @@ class PostItem extends StatelessWidget {
                       ],
                     ),
                   ),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz))
+                  IconButton(
+                      onPressed: () {
+                        buildShowModalBottomSheet(context);
+                      },
+                      icon: Icon(Icons.more_horiz))
                 ],
               ),
               SizedBox(
@@ -94,9 +105,16 @@ class PostItem extends StatelessWidget {
                         size: 16,
                       ),
                     ),
-                    SizedBox(width: 10,),
-                    Text("0", style: TextStyle( fontSize: 16),),
-                    SizedBox(width: 10,),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "0",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
                     Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
@@ -107,8 +125,13 @@ class PostItem extends StatelessWidget {
                         size: 16,
                       ),
                     ),
-                    SizedBox(width: 10,),
-                    Text("${post.countComments}", style: TextStyle( fontSize: 16),),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "${post.countComments}",
+                      style: TextStyle(fontSize: 16),
+                    ),
                   ],
                 ),
               ),
@@ -117,5 +140,89 @@ class PostItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<dynamic> buildShowModalBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return Container(
+            padding: EdgeInsets.all(8),
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20))),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.report_problem),
+                    const SizedBox(width: 20,),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text("Báo cáo bài viết",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black
+                        ),
+                      )),],
+                ),
+                const Divider(thickness: 2,),
+                Row(
+                  children: [
+                    const Icon(Icons.delete),
+                    const SizedBox(width: 20,),
+                    TextButton(
+                        onPressed: () {
+                          deletePost(post.id, context).then((value) {
+                            Navigator.pop(context);
+                            if(value.statusCode == 200){
+
+                            }
+
+                          });
+                        },
+                        child: const Text("Xóa bài viết",
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black
+                          ),
+                        )),
+                  ],
+
+                ),
+                const Divider(thickness: 2,),
+                Row(
+                  children: [
+                    const Icon(Icons.edit),
+                    const SizedBox(width: 20,),
+                    TextButton(
+                        onPressed: () {},
+                        child: const Text("Sửa bài viết",
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black
+                          ),
+                        )),
+                  ],
+                ),
+                const Divider(thickness: 2,)
+              ],
+            ));
+      },
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+      backgroundColor: whiteColor.withOpacity(1.0),
+    );
+  }
+
+
+  Future<http.Response> deletePost(String postId, BuildContext context) async {
+    var url = "http://192.168.1.9:8000/api/v1/posts/delete/${postId}";
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? "";
+    return await http.get(Uri.parse(url), headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
   }
 }
