@@ -1,7 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:halo/components/circle_avatar.dart';
 import 'package:halo/constants.dart';
+import 'package:halo/models/comment.dart';
 import 'package:halo/models/post.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PostDetailScreen extends StatefulWidget {
   final Post post;
@@ -12,8 +18,22 @@ class PostDetailScreen extends StatefulWidget {
 }
 
 class _PostDetailScreenState extends State<PostDetailScreen> {
+  var contentController = TextEditingController();
+  var countLike;
+  late Future<List<Comment>> futureComment;
+
   @override
-  void initState() {}
+  void initState() {
+      futureComment = fetchComment(widget.post.id);
+      countLike = widget.post.like.length;
+  }
+
+  @override
+  void dispose() {
+    contentController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +56,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       children: [
                         Row(
                           children: [
-                            ProfileAvatar(size: 24.0,),
+                            ProfileAvatar(
+                              size: 24.0,
+                            ),
                             SizedBox(
                               width: 8,
                             ),
@@ -105,7 +127,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           width: 10,
                         ),
                         Text(
-                          "0",
+                          "${countLike}",
                           style: TextStyle(fontSize: 16),
                         ),
                       ],
@@ -114,8 +136,27 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       thickness: 1,
                     ),
                     //Text("Hãy là người đầu tiên bình luận"),
-                    Comment()
-
+                    FutureBuilder<List<Comment>>(
+                      future: futureComment,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          List<Comment>? listComment = snapshot.data;
+                          return Column(
+                            children: [
+                              ...listComment!.map((comment){
+                                return CommentContent(comment: comment,);
+                              } ).toList(),
+                            ],
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('${snapshot.error}');
+                        }
+                        else {
+                          return Text("Hãy là người đầu tiên bình luận");
+                        }
+                        return const CircularProgressIndicator();
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -144,7 +185,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           SizedBox(width: 10),
                           Expanded(
                               child: TextField(
-                            decoration: InputDecoration(
+                            controller: contentController,
+                            decoration: const InputDecoration(
                               hintText: "Nhập bình luận",
                               border: InputBorder.none,
                             ),
@@ -158,10 +200,20 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   SizedBox(
                     width: 10,
                   ),
-                  Icon(
-                    Icons.send,
-                    color: primaryColor,
-                  )
+                  IconButton(
+                      onPressed: () {
+                        commentPost(widget.post.id, contentController.text)
+                            .then((response){
+                              if(response.statusCode == 200){
+                                print("Success");
+                              }
+
+                            });
+                      },
+                      icon: Icon(
+                        Icons.send,
+                        color: primaryColor,
+                      ))
                 ],
               ),
             ),
@@ -172,9 +224,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   }
 }
 
-class Comment extends StatelessWidget {
-  const Comment({
-    Key? key,
+class CommentContent extends StatelessWidget {
+  final Comment comment;
+  const CommentContent({
+    Key? key, required this.comment
   }) : super(key: key);
 
   @override
@@ -183,19 +236,59 @@ class Comment extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          ProfileAvatar(size: 16.0,),
-          SizedBox(width: 10,),
-          Expanded(
-              child: Text("Bình luận",
-                maxLines: 10,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 16
-                ),
-              )
-          )
+          ProfileAvatar(
+            size: 16.0,
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+            Text("${comment.username}", style: TextStyle(
+              fontWeight: FontWeight.bold
+            ),),
+            Text(
+              "${comment.content}",
+              maxLines: 10,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 16),
+            )
+          ],),
+
         ],
       ),
     );
+  }
+}
+
+Future<http.Response> commentPost(String postId, String content) async {
+  var url = "http://192.168.1.9:8000/api/v1/postComment/create/${postId}";
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token') ?? "";
+  final userId = prefs.getString('userId');
+  Map data = {
+    'userId': userId,
+    'content': content,
+    'commentAnswered': ""
+  };
+  return await http.post(Uri.parse(url),
+      body: data,
+      headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
+}
+
+Future<List<Comment>> fetchComment(String postId) async {
+  final prefs = await SharedPreferences.getInstance();
+
+  final token = prefs.getString('token') ?? "";
+  var response = await http.get(
+      Uri.parse("http://192.168.1.9:8000/api/v1/postComment/list/${postId}"),
+      headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
+
+  if (response.statusCode == 200) {
+    final parsed = json.decode(response.body)["data"].cast<Map<String, dynamic>>();
+    return parsed.map<Comment>((json) => Comment.fromMap(json)).toList();
+  } else {
+    throw Exception('Failed to load post');
   }
 }

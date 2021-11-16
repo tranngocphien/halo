@@ -25,6 +25,14 @@ class PostItem extends StatefulWidget {
 
 class _PostItemState extends State<PostItem> {
   var isDeleted = false;
+  var countLike;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    countLike = widget.post.like.length;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +70,7 @@ class _PostItemState extends State<PostItem> {
                         ),
                         Row(children: [
                           Text(
-                            "10 phút",
+                            "${widget.post.createAt}",
                             style: TextStyle(
                                 color: Colors.grey[500], fontSize: 12),
                           ),
@@ -109,7 +117,7 @@ class _PostItemState extends State<PostItem> {
                       width: 10,
                     ),
                     Text(
-                      "0",
+                      "${countLike== null? 0: countLike}",
                       style: TextStyle(fontSize: 16),
                     ),
                     SizedBox(

@@ -1,36 +1,37 @@
-import 'package:halo/models/user.dart';
-
 class Post {
   final String username;
   final String content;
   final String id;
   // final List<dynamic> image;
   // final List<dynamic> videos;
-  // final String createAt;
-  // final String updateAt;
+  final List like;
+  final String createAt;
+  final String updateAt;
   final bool isLike;
   final int countComments;
 
   Post(
-      {required this.username, required this.content,required this.id,
+      {required this.username,
+      required this.content,
+      required this.id,
       // required this.image,
       // required this.videos,
-      // required this.createAt,
-      // required this.updateAt,
-        required this.isLike,
-      required this.countComments
-  });
+      required this.like,
+      required this.createAt,
+      required this.updateAt,
+      required this.isLike,
+      required this.countComments});
 
   factory Post.fromMap(Map<String, dynamic> json) => Post(
-    username: json["author"]["username"],
+      username: json["author"]["username"],
       // user: User(id: json["author"]["_id"], username: json["author"]["username"], phonenumber: json["author"]["phonenumber"] ),
-    content: json["described"] == null? "": json["described"], id: json["_id"],
+      content: json["described"] == null ? "" : json["described"],
+      id: json["_id"],
       // image: json["images"],
       // videos: json["videos"],
-      // createAt: json["createdAt"],
-      // updateAt: json["updatedAt"],
+      like: json["like"],
+      createAt: json["createdAt"],
+      updateAt: json["updatedAt"],
       isLike: json["isLike"],
-      countComments: json["countComments"]
-  );
-
+      countComments: json["countComments"]);
 }
