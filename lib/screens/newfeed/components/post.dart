@@ -240,7 +240,7 @@ class _PostItemState extends State<PostItem> {
   }
 
   Future<http.Response> deletePost(String postId, BuildContext context) async {
-    var url = "http://192.168.1.9:8000/api/v1/posts/delete/${postId}";
+    var url = "${urlApi}/posts/delete/${postId}";
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
     return await http.get(Uri.parse(url), headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});

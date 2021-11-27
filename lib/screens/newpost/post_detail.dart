@@ -263,7 +263,7 @@ class CommentContent extends StatelessWidget {
 }
 
 Future<http.Response> commentPost(String postId, String content) async {
-  var url = "http://192.168.1.9:8000/api/v1/postComment/create/${postId}";
+  var url_comment = urlApi + "/postComment/create/${postId}";
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token') ?? "";
   final userId = prefs.getString('userId');
@@ -272,7 +272,7 @@ Future<http.Response> commentPost(String postId, String content) async {
     'content': content,
     'commentAnswered': ""
   };
-  return await http.post(Uri.parse(url),
+  return await http.post(Uri.parse(url_comment),
       body: data,
       headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
 }
@@ -282,7 +282,7 @@ Future<List<Comment>> fetchComment(String postId) async {
 
   final token = prefs.getString('token') ?? "";
   var response = await http.get(
-      Uri.parse("http://192.168.1.9:8000/api/v1/postComment/list/${postId}"),
+      Uri.parse("${urlApi}/postComment/list/${postId}"),
       headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
 
   if (response.statusCode == 200) {

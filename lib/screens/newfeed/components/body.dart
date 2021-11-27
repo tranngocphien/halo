@@ -117,7 +117,7 @@ Future<List<Post>> fetchPost() async {
 
   final token = prefs.getString('token') ?? "";
   var response = await http.get(
-      Uri.parse("http://192.168.1.9:8000/api/v1/posts/list"),
+      Uri.parse("${urlApi}/posts/list"),
       headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
 
   if (response.statusCode == 200) {

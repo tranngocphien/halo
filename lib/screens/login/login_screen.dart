@@ -157,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
       'password': password
     };
     var jsonResponse = null;
-    var response = await http.post(Uri.parse("http://192.168.1.9:8000/api/v1/users/login"), body: data);
+    var response = await http.post(Uri.parse("${urlApi}/users/login"), body: data);
     if(response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
       if(jsonResponse != null) {

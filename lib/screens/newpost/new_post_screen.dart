@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
 import 'package:halo/screens/newpost/components/image.dart';
-import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -147,37 +146,39 @@ class _NewPostState extends State<NewPost> {
     final token = prefs.getString('token') ?? "";
 
     List<File> listFile =
-        imageFileList!.map((image) => File(image.path)).toList();
+         imageFileList!.map((image) => File(image.path)).toList();
     File videoFile;
 
+    List<String> imagesByte = listFile.map((e) =>"data:image/jpeg;base64,"+ base64.encode(e.readAsBytesSync())).toList();
+    print(imagesByte.toString());
+    print(imagesByte.length);
     Map data = {
       'described': described,
+      'image': imagesByte
     };
 
-    var request = http.MultipartRequest("Post", Uri.parse("http://192.168.1.9:8000/api/v1/posts/create"));
-    for(var image in _imageFileList!){
-        request.files.add(await http.MultipartFile.fromPath("images", image.path));
+    // var request = http.MultipartRequest("Post", Uri.parse("http://192.168.1.9:8000/api/v1/posts/create"));
+    // for(var image in _imageFileList!){
+    //     request.files.add(await http.MultipartFile.fromPath("images", image.path));
+    // }
+    //
+    // request.fields["described"] = described;
+    //
+    // Map<String, String> headers = {
+    //   "Accept": "application/json",
+    //   "Authorization": "Bearer $token"
+    // };
+    //
+    // request.headers.addAll(headers);
+    //
+    // var jsonResponse = null;
+
+    var response = await http.post(
+        Uri.parse("${urlApi}posts/create"),
+        headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'},
+        body: data);
+    if(response.statusCode == 200){
+      print("success");
     }
-
-    request.fields["described"] = described;
-
-    Map<String, String> headers = {
-      "Accept": "application/json",
-      "Authorization": "Bearer $token"
-    };
-
-    request.headers.addAll(headers);
-
-    var jsonResponse = null;
-
-    // var response = await http.post(
-    //     Uri.parse("http://192.168.1.9:8000/api/v1/posts/create"),
-    //     headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'},
-    //     body: data);
-    var response = await request.send();
-    response.stream.transform(utf8.decoder).listen((value) {
-      print(value);
-    });
-    print("A");
   }
 }

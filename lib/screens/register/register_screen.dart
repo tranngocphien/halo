@@ -136,7 +136,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       'username': username
     };
     var jsonResponse = null;
-    var response = await http.post(Uri.parse("http://192.168.1.9:8000/api/v1/users/register"), body: data);
+    var response = await http.post(Uri.parse("${urlApi}/users/register"), body: data);
     if(response.statusCode == 201) {
       jsonResponse = json.decode(response.body);
       print(jsonResponse);
