@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:halo/screens/newfeed/newfeed_screen.dart';
 import 'package:halo/screens/profile/profile_screen.dart';
 import 'package:halo/screens/chats/chat_screen.dart';
 import 'package:halo/screens/contact/contact_screen.dart';

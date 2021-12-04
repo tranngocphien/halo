@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../../constants.dart';
+import '../../../../constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,7 +45,7 @@ class _IconLikeState extends State<IconLike> {
           });
 
         },
-        child: Icon(
+        child: const Icon(
           Icons.thumb_up,
           color: Colors.white,
           size: 16,
@@ -56,7 +56,7 @@ class _IconLikeState extends State<IconLike> {
 }
 
 Future<http.Response> likePost(String postId) async {
-  var url = "http://192.168.1.9:8000/api/v1/postLike/action/${postId}";
+  var url = "${urlApi}/postLike/action/${postId}";
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token') ?? "";
   final userId = prefs.getString('userId');

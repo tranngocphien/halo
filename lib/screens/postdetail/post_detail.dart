@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PostDetailScreen extends StatefulWidget {
-  final Post post;
+  final PostModel post;
   const PostDetailScreen({Key? key, required this.post}) : super(key: key);
 
   @override
@@ -39,7 +39,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
-        title: Text("Bình luận"),
+        title: const Text("Bình luận"),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -56,18 +56,18 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       children: [
                         Row(
                           children: [
-                            ProfileAvatar(
+                            const ProfileAvatar(
                               size: 24.0,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 8,
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "${widget.post.username}",
-                                  style: TextStyle(
+                                  widget.post.username,
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w800),
                                 ),
@@ -77,7 +77,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     style: TextStyle(
                                         color: Colors.grey[500], fontSize: 12),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 4,
                                   ),
                                   Icon(
@@ -94,45 +94,54 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             onPressed: () {}, icon: Icon(Icons.more_horiz))
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 16,
                     ),
                     Text(
                       "${widget.post.content}",
                       style: TextStyle(fontSize: 20),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 16,
                     ),
+                    widget.post.image.isNotEmpty?
+                    GridView.count(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      crossAxisCount: 2,
+                      children: widget.post.image
+                          .map((e) => Image.network("${urlFiles}/${e.name}"))
+                          .toList(),
+                    ): Container(),
                     // Image.asset("assets/images/profile_avatar.jpg"),
-                    SizedBox(
+                    const SizedBox(
                       height: 8,
                     ),
-                    Divider(
+                    const Divider(
                       thickness: 1,
                     ),
                     Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               color: primaryColor, shape: BoxShape.circle),
-                          child: Icon(
+                          child: const Icon(
                             Icons.thumb_up,
                             color: Colors.white,
                             size: 16,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Text(
                           "${countLike}",
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ],
                     ),
-                    Divider(
+                    const Divider(
                       thickness: 1,
                     ),
                     //Text("Hãy là người đầu tiên bình luận"),
@@ -163,11 +172,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             ),
           ),
           Container(
-            padding: EdgeInsets.all(kDefaultPadding / 2),
+            padding: const EdgeInsets.all(kDefaultPadding / 2),
             child: SafeArea(
               child: Row(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   Expanded(
@@ -181,8 +190,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           vertical: 4, horizontal: 8),
                       child: Row(
                         children: [
-                          Icon(Icons.sentiment_satisfied_outlined),
-                          SizedBox(width: 10),
+                          const Icon(Icons.sentiment_satisfied_outlined),
+                          const SizedBox(width: 10),
                           Expanded(
                               child: TextField(
                             controller: contentController,
@@ -190,14 +199,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               hintText: "Nhập bình luận",
                               border: InputBorder.none,
                             ),
-                            style: TextStyle(fontSize: 18),
+                            style: const TextStyle(fontSize: 18),
                           )),
-                          Icon(Icons.image)
+                          const Icon(Icons.image)
                         ],
                       ),
                     ),
                   )),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   IconButton(
@@ -210,7 +219,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
                             });
                       },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.send,
                         color: primaryColor,
                       ))
@@ -236,23 +245,23 @@ class CommentContent extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          ProfileAvatar(
+          const ProfileAvatar(
             size: 16.0,
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            Text("${comment.username}", style: TextStyle(
+            Text(comment.username, style: const TextStyle(
               fontWeight: FontWeight.bold
             ),),
             Text(
-              "${comment.content}",
+              comment.content,
               maxLines: 10,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             )
           ],),
 

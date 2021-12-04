@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
-import 'package:halo/screens/newpost/components/image.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'components/image.dart';
 
 class NewPost extends StatefulWidget {
   const NewPost({Key? key}) : super(key: key);
@@ -16,7 +16,7 @@ class NewPost extends StatefulWidget {
 }
 
 class _NewPostState extends State<NewPost> {
-  List<XFile>? _imageFileList;
+  List<XFile> _imageFileList = List<XFile>.empty(growable: true);
   XFile? _videoFile;
   var _contentController = TextEditingController();
 
@@ -98,20 +98,20 @@ class _NewPostState extends State<NewPost> {
                     child: _imageFileList == null
                         ? Container()
                         : GridView.builder(
-                            itemCount: _imageFileList!.length,
+                            itemCount: _imageFileList.length,
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2),
                             itemBuilder: (BuildContext context, int index) {
                               return ImageItem(
                                   image: Image.file(
-                                    File(_imageFileList![index].path),
+                                    File(_imageFileList[index].path),
                                     fit: BoxFit.contain,
                                   ),
                                   iconButton: IconButton(
                                     onPressed: () {
                                       setState(() {
-                                        _imageFileList!.removeAt(index);
+                                        _imageFileList.removeAt(index);
                                       });
                                     },
                                     icon: Icon(Icons.close),
@@ -141,28 +141,39 @@ class _NewPostState extends State<NewPost> {
   }
 
   _createPost(
-      String described, List<XFile>? imageFileList, XFile? video) async {
+      String described, List<XFile> imageFileList, XFile? video) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
+    List<String> imagesByte = List<String>.empty(growable: true);
 
-    List<File> listFile =
-         imageFileList!.map((image) => File(image.path)).toList();
+    if(imageFileList.isNotEmpty){
+      List<File> listFile =
+      imageFileList.map((image) => File(image.path)).toList();
+      imagesByte.addAll( listFile.map((e) =>"data:image/jpeg;base64,"+ base64.encode(e.readAsBytesSync())).toList());
+    }
+
     File videoFile;
 
-    List<String> imagesByte = listFile.map((e) =>"data:image/jpeg;base64,"+ base64.encode(e.readAsBytesSync())).toList();
-    print(imagesByte.toString());
-    print(imagesByte.length);
     Map data = {
-      'described': described,
-      'image': imagesByte
+      "described": described,
+      "images": imagesByte.isEmpty ? []: imagesByte,
+      "videos": []
+
     };
 
-    var response = await http.post(
-        Uri.parse("${urlApi}posts/create"),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'},
-        body: data);
+    var body = json.encode(data);
+    var dio = Dio(BaseOptions(baseUrl: urlApi,connectTimeout: 30000,
+      receiveTimeout: 30000,
+      headers: {
+        'Authorization' : 'Bearer $token',
+      },
+    ));
+    var response = await dio.post("/posts/create", data: data );
     if(response.statusCode == 200){
       print("success");
+    }
+    else {
+      print("failed");
     }
   }
 }

@@ -4,12 +4,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:halo/components/circle_avatar.dart';
-import 'package:halo/screens/newfeed/components/post.dart';
+import 'package:halo/screens/post/newfeed/components/post.dart';
 import 'package:http/http.dart' as http;
 import 'package:halo/models/post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../constants.dart';
+import '../../../../constants.dart';
+
 
 class Body extends StatefulWidget {
   const Body({
@@ -21,7 +22,7 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  late Future<List<Post>> futurePost;
+  late Future<List<PostModel>> futurePost;
 
   @override
   void initState() {
@@ -91,7 +92,7 @@ class _BodyState extends State<Body> {
               ],
             ),
           ),
-          FutureBuilder<List<Post>>(
+          FutureBuilder<List<PostModel>>(
               future: futurePost,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -112,7 +113,7 @@ class _BodyState extends State<Body> {
   }
 }
 
-Future<List<Post>> fetchPost() async {
+Future<List<PostModel>> fetchPost() async {
   final prefs = await SharedPreferences.getInstance();
 
   final token = prefs.getString('token') ?? "";
@@ -122,7 +123,7 @@ Future<List<Post>> fetchPost() async {
 
   if (response.statusCode == 200) {
     final parsed = json.decode(response.body)["data"].cast<Map<String, dynamic>>();
-    return parsed.map<Post>((json) => Post.fromMap(json)).toList();
+    return parsed.map<PostModel>((json) => PostModel.fromMap(json)).toList();
   } else {
     throw Exception('Failed to load post');
   }

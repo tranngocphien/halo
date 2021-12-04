@@ -1,8 +1,10 @@
-class Post {
+import 'image_model.dart';
+
+class PostModel {
   final String username;
   final String content;
   final String id;
-  // final List<dynamic> image;
+  final List<ImageModel> image;
   // final List<dynamic> videos;
   final List like;
   final String createAt;
@@ -10,11 +12,11 @@ class Post {
   final bool isLike;
   final int countComments;
 
-  Post(
+  PostModel(
       {required this.username,
       required this.content,
       required this.id,
-      // required this.image,
+      required this.image,
       // required this.videos,
       required this.like,
       required this.createAt,
@@ -22,12 +24,11 @@ class Post {
       required this.isLike,
       required this.countComments});
 
-  factory Post.fromMap(Map<String, dynamic> json) => Post(
+  factory PostModel.fromMap(Map<String, dynamic> json) => PostModel(
       username: json["author"]["username"],
-      // user: User(id: json["author"]["_id"], username: json["author"]["username"], phonenumber: json["author"]["phonenumber"] ),
       content: json["described"] == null ? "" : json["described"],
       id: json["_id"],
-      // image: json["images"],
+      image: List<ImageModel>.from(json["images"].map((x) => ImageModel.fromJson(x))),
       // videos: json["videos"],
       like: json["like"],
       createAt: json["createdAt"],
