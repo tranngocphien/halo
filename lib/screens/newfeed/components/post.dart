@@ -246,6 +246,14 @@ class _PostItemState extends State<PostItem> {
     return await http.get(Uri.parse(url), headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
   }
 
+  Future<http.Response> reportPost(String postId) async {
+    var url = "${urlApi}/postReport/create/${postId}";
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? "";
+    return await http.post(Uri.parse(url), headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
+
+  }
+
 }
 
 

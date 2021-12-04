@@ -157,22 +157,6 @@ class _NewPostState extends State<NewPost> {
       'image': imagesByte
     };
 
-    // var request = http.MultipartRequest("Post", Uri.parse("http://192.168.1.9:8000/api/v1/posts/create"));
-    // for(var image in _imageFileList!){
-    //     request.files.add(await http.MultipartFile.fromPath("images", image.path));
-    // }
-    //
-    // request.fields["described"] = described;
-    //
-    // Map<String, String> headers = {
-    //   "Accept": "application/json",
-    //   "Authorization": "Bearer $token"
-    // };
-    //
-    // request.headers.addAll(headers);
-    //
-    // var jsonResponse = null;
-
     var response = await http.post(
         Uri.parse("${urlApi}posts/create"),
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'},
