@@ -20,7 +20,7 @@ class PostDetailScreen extends StatefulWidget {
 class _PostDetailScreenState extends State<PostDetailScreen> {
   var contentController = TextEditingController();
   var countLike;
-  late Future<List<Comment>> futureComment;
+  late Future<List<CommentModel>> futureComment;
 
   @override
   void initState() {
@@ -145,11 +145,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       thickness: 1,
                     ),
                     //Text("Hãy là người đầu tiên bình luận"),
-                    FutureBuilder<List<Comment>>(
+                    FutureBuilder<List<CommentModel>>(
                       future: futureComment,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          List<Comment>? listComment = snapshot.data;
+                          List<CommentModel>? listComment = snapshot.data;
                           return Column(
                             children: [
                               ...listComment!.map((comment){
@@ -215,6 +215,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             .then((response){
                               if(response.statusCode == 200){
                                 print("Success");
+                                FocusScope.of(context).requestFocus(FocusNode());
+                                contentController.text = "";
                               }
 
                             });
@@ -234,7 +236,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 }
 
 class CommentContent extends StatelessWidget {
-  final Comment comment;
+  final CommentModel comment;
   const CommentContent({
     Key? key, required this.comment
   }) : super(key: key);
@@ -286,7 +288,7 @@ Future<http.Response> commentPost(String postId, String content) async {
       headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
 }
 
-Future<List<Comment>> fetchComment(String postId) async {
+Future<List<CommentModel>> fetchComment(String postId) async {
   final prefs = await SharedPreferences.getInstance();
 
   final token = prefs.getString('token') ?? "";
@@ -296,7 +298,7 @@ Future<List<Comment>> fetchComment(String postId) async {
 
   if (response.statusCode == 200) {
     final parsed = json.decode(response.body)["data"].cast<Map<String, dynamic>>();
-    return parsed.map<Comment>((json) => Comment.fromMap(json)).toList();
+    return parsed.map<CommentModel>((json) => CommentModel.fromMap(json)).toList();
   } else {
     throw Exception('Failed to load post');
   }

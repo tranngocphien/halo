@@ -133,7 +133,7 @@ Future<List<UFriend>> fetchSearchFriends(String keyword) async {
     "keyword" : keyword
   };
 
-  final response = await http.post(Uri.parse('http://192.168.1.9:8000/api/v1/users/search'), headers: {HttpHeaders.authorizationHeader: 'Bearer $token'}, body: data);
+  final response = await http.post(Uri.parse('${urlApi}/users/search'), headers: {HttpHeaders.authorizationHeader: 'Bearer $token'}, body: data);
   if (response.statusCode == 200) {
     return parseFriends(response.body);
   } else {

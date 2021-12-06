@@ -107,7 +107,7 @@ Future<List<UFriend>> fetchFriends() async {
 
   final token = prefs.getString('token') ?? "";
   //print(token);
-  final response = await http.post(Uri.parse('http://192.168.1.9:8000/api/v1/friends/list'), headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
+  final response = await http.post(Uri.parse('${urlApi}/friends/list'), headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
   if (response.statusCode == 200) {
     return parseFriends(response.body);
   } else {

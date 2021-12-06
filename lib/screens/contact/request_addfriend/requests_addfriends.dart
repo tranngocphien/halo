@@ -74,7 +74,7 @@ Future<List<RQFriend>> fetchRQFriends() async {
     'userId': prefs.getString('userId') ?? ""
   };
   //print(data);
-  final response = await http.post(Uri.parse('http://192.168.1.9:8000/api/v1/friends/get-requested-friend'),
+  final response = await http.post(Uri.parse('${urlApi}/friends/get-requested-friend'),
                                     headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'},
                                     body: data);
   //print(response);

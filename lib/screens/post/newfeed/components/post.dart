@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:halo/components/circle_avatar.dart';
 import 'package:halo/models/post.dart';
+import 'package:halo/screens/post/edit_post/edit_post_screen.dart';
 import 'package:halo/screens/postdetail/post_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -187,7 +188,9 @@ class _PostItemState extends State<PostItem> {
                       width: 20,
                     ),
                     TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+
+                        },
                         child: const Text(
                           "Báo cáo bài viết",
                           style: TextStyle(fontSize: 20, color: Colors.black),
@@ -234,7 +237,14 @@ class _PostItemState extends State<PostItem> {
                       width: 20,
                     ),
                     TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditPostScreen(post: widget.post)),
+                          );
+                        },
                         child: const Text(
                           "Sửa bài viết",
                           style: TextStyle(fontSize: 20, color: Colors.black),

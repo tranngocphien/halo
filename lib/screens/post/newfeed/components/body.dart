@@ -64,19 +64,19 @@ class _BodyState extends State<Body> {
             ),
           ),
           Container(
-            margin: EdgeInsets.symmetric(vertical: 8),
-            padding: EdgeInsets.symmetric(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(
                 horizontal: kDefaultPadding / 2, vertical: kDefaultPadding),
-            decoration: BoxDecoration(color: whiteColor),
+            decoration: const BoxDecoration(color: whiteColor),
             child: Row(
               children: [
-                ProfileAvatar(size: 24,),
-                SizedBox(
+                const ProfileAvatar(size: 24,),
+                const SizedBox(
                   width: kDefaultPadding,
                 ),
                 Expanded(
                     child: Container(
-                  padding: EdgeInsets.symmetric(vertical: kDefaultPadding),
+                  padding: const EdgeInsets.symmetric(vertical: kDefaultPadding),
                   child: GestureDetector(
                     onTap: () {
                       Navigator.pushNamed(context, "/newpost");
@@ -100,11 +100,11 @@ class _BodyState extends State<Body> {
                     child: ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
-                          return PostItem(post: snapshot.data![index]);
+                          return PostItem(post: snapshot.data![snapshot.data!.length - index - 1]);
                         }),
                   );
                 }
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               })
         ],
 

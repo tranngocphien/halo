@@ -91,7 +91,7 @@ class _Friend extends State<FriendComponent> {
 
                         print(data);
 
-                        final response = await http.post(Uri.parse('http://192.168.1.9:8000/api/v1/friends/set-request-friend'), headers: {HttpHeaders.authorizationHeader: 'Bearer $token'}, body: data);
+                        final response = await http.post(Uri.parse('${urlApi}/friends/set-request-friend'), headers: {HttpHeaders.authorizationHeader: 'Bearer $token'}, body: data);
                         int code = response.statusCode;
 
                         print(response.body);

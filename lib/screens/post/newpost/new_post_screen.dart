@@ -74,9 +74,12 @@ class _NewPostState extends State<NewPost> {
         actions: [
           Container(
               margin: EdgeInsets.all(8),
-              child: ElevatedButton(onPressed: () {
-                _createPost(_contentController.text, _imageFileList, _videoFile);
-              }, child: Text("Đăng")))
+              child: ElevatedButton(
+                  onPressed: () {
+                    _createPost(
+                        _contentController.text, _imageFileList, _videoFile);
+                  },
+                  child: Text("Đăng")))
         ],
       ),
       body: Column(
@@ -103,7 +106,7 @@ class _NewPostState extends State<NewPost> {
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2),
                             itemBuilder: (BuildContext context, int index) {
-                              return ImageItem(
+                              return ImagePostElement(
                                   image: Image.file(
                                     File(_imageFileList[index].path),
                                     fit: BoxFit.contain,
@@ -140,39 +143,41 @@ class _NewPostState extends State<NewPost> {
     );
   }
 
-  _createPost(
-      String described, List<XFile> imageFileList, XFile? video) async {
+  _createPost(String described, List<XFile> imageFileList, XFile? video) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
     List<String> imagesByte = List<String>.empty(growable: true);
 
-    if(imageFileList.isNotEmpty){
+    if (imageFileList.isNotEmpty) {
       List<File> listFile =
-      imageFileList.map((image) => File(image.path)).toList();
-      imagesByte.addAll( listFile.map((e) =>"data:image/jpeg;base64,"+ base64.encode(e.readAsBytesSync())).toList());
+          imageFileList.map((image) => File(image.path)).toList();
+      imagesByte.addAll(listFile
+          .map((e) =>
+              "data:image/jpeg;base64," + base64.encode(e.readAsBytesSync()))
+          .toList());
     }
 
     File videoFile;
 
     Map data = {
       "described": described,
-      "images": imagesByte.isEmpty ? []: imagesByte,
+      "images": imagesByte.isEmpty ? [] : imagesByte,
       "videos": []
-
     };
 
     var body = json.encode(data);
-    var dio = Dio(BaseOptions(baseUrl: urlApi,connectTimeout: 30000,
+    var dio = Dio(BaseOptions(
+      baseUrl: urlApi,
+      connectTimeout: 30000,
       receiveTimeout: 30000,
       headers: {
-        'Authorization' : 'Bearer $token',
+        'Authorization': 'Bearer $token',
       },
     ));
-    var response = await dio.post("/posts/create", data: data );
-    if(response.statusCode == 200){
+    var response = await dio.post("/posts/create", data: data);
+    if (response.statusCode == 200) {
       print("success");
-    }
-    else {
+    } else {
       print("failed");
     }
   }

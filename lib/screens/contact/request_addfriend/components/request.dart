@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:halo/constants.dart';
 
 import 'package:halo/screens/contact/request_addfriend/requests_addfriends.dart';
 
@@ -71,7 +72,7 @@ class _Request extends State<Request> {
                         "is_accept" : "1"
                       };
                       print(data);
-                      final response = await http.post(Uri.parse('http://192.168.1.9:8000/api/v1/friends/set-accept'),
+                      final response = await http.post(Uri.parse('${urlApi}/friends/set-accept'),
                           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
                           body: data);
 
