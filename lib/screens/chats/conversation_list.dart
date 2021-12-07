@@ -201,6 +201,7 @@ class _ConversationListState extends State<ConversationList> {
       searchBar = const Text('Tìm bạn bè, tin nhắn...',
           style: TextStyle(fontSize: mediumSize, color: Colors.white));
       isSearchedStart = false;
+      isSearchedScroll = false;
     }
   }
 
