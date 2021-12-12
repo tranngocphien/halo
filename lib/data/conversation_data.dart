@@ -1,4 +1,4 @@
-import 'package:zalo/models/models.dart';
+import 'package:halo/models/models.dart';
 
 class ConversationData {
   static List<Conversation> conversationList = [

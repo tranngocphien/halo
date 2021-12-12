@@ -1,5 +1,5 @@
-import 'package:zalo/data/data.dart';
-import 'package:zalo/models/models.dart';
+import 'package:halo/data/data.dart';
+import 'package:halo/models/models.dart';
 
 class SearchData {
   // 5 từ khoá tìm kiếm gần đây

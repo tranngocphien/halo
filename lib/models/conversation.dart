@@ -1,5 +1,5 @@
 import 'message.dart';
-import 'user.dart';
+import 'user_screen.dart';
 
 class Conversation {
   late String id;
