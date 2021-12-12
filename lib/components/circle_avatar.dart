@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
 
 class ProfileAvatar extends StatelessWidget {
-  const ProfileAvatar({Key? key}) : super(key: key);
+  final double size;
+  const ProfileAvatar({Key? key,required this.size}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         CircleAvatar(
-          radius: 24,
-          backgroundImage: NetworkImage("http://192.168.1.9:8000/files/avatar_2.png")
+          radius: size,
+          backgroundImage: NetworkImage("${urlFiles}/avatar_2.png")
         ),
 
         Positioned(

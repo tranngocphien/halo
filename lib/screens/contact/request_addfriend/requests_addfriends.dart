@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:halo/screens/newfeed/newfeed_screen.dart';
 import 'package:halo/screens/profile/profile_screen.dart';
 import 'package:halo/screens/chats/chat_screen.dart';
 import 'package:halo/screens/contact/contact_screen.dart';
@@ -75,7 +74,7 @@ Future<List<RQFriend>> fetchRQFriends() async {
     'userId': prefs.getString('userId') ?? ""
   };
   //print(data);
-  final response = await http.post(Uri.parse('http://192.168.1.9:8000/api/v1/friends/get-requested-friend'),
+  final response = await http.post(Uri.parse('${urlApi}/friends/get-requested-friend'),
                                     headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'},
                                     body: data);
   //print(response);

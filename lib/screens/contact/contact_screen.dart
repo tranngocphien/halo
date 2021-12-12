@@ -31,7 +31,9 @@ class _ContactState extends State<ContactScreen> {
       appBar: AppBar(
         backgroundColor: primaryColor,
         leading: Icon(Icons.search),
-        actions: [IconButton(onPressed: (){}, icon: Icon(Icons.person_add_alt_sharp))],
+        actions: [IconButton(onPressed: (){
+          Navigator.pushNamed(context, "/searchFriend");
+        }, icon: Icon(Icons.person_add_alt_sharp))],
         title: const TextField(
         ),
       ),
@@ -105,7 +107,7 @@ Future<List<UFriend>> fetchFriends() async {
 
   final token = prefs.getString('token') ?? "";
   //print(token);
-  final response = await http.post(Uri.parse('http://192.168.1.9:8000/api/v1/friends/list'), headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
+  final response = await http.post(Uri.parse('${urlApi}/friends/list'), headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
   if (response.statusCode == 200) {
     return parseFriends(response.body);
   } else {

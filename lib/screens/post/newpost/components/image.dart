@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ImageItem extends StatelessWidget {
-  const ImageItem({Key? key, required this.image, required this.iconButton})
+class ImagePostElement extends StatelessWidget {
+  const ImagePostElement({Key? key, required this.image, required this.iconButton})
       : super(key: key);
   final Image image;
   final IconButton iconButton;

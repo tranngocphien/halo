@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
-import 'package:halo/screens/newpost/components/image.dart';
-import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'components/image.dart';
 
 class NewPost extends StatefulWidget {
   const NewPost({Key? key}) : super(key: key);
@@ -17,7 +16,7 @@ class NewPost extends StatefulWidget {
 }
 
 class _NewPostState extends State<NewPost> {
-  List<XFile>? _imageFileList;
+  List<XFile> _imageFileList = List<XFile>.empty(growable: true);
   XFile? _videoFile;
   var _contentController = TextEditingController();
 
@@ -75,9 +74,12 @@ class _NewPostState extends State<NewPost> {
         actions: [
           Container(
               margin: EdgeInsets.all(8),
-              child: ElevatedButton(onPressed: () {
-                _createPost(_contentController.text, _imageFileList, _videoFile);
-              }, child: Text("Đăng")))
+              child: ElevatedButton(
+                  onPressed: () {
+                    _createPost(
+                        _contentController.text, _imageFileList, _videoFile);
+                  },
+                  child: Text("Đăng")))
         ],
       ),
       body: Column(
@@ -99,20 +101,20 @@ class _NewPostState extends State<NewPost> {
                     child: _imageFileList == null
                         ? Container()
                         : GridView.builder(
-                            itemCount: _imageFileList!.length,
+                            itemCount: _imageFileList.length,
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2),
                             itemBuilder: (BuildContext context, int index) {
-                              return ImageItem(
+                              return ImagePostElement(
                                   image: Image.file(
-                                    File(_imageFileList![index].path),
+                                    File(_imageFileList[index].path),
                                     fit: BoxFit.contain,
                                   ),
                                   iconButton: IconButton(
                                     onPressed: () {
                                       setState(() {
-                                        _imageFileList!.removeAt(index);
+                                        _imageFileList.removeAt(index);
                                       });
                                     },
                                     icon: Icon(Icons.close),
@@ -141,43 +143,42 @@ class _NewPostState extends State<NewPost> {
     );
   }
 
-  _createPost(
-      String described, List<XFile>? imageFileList, XFile? video) async {
+  _createPost(String described, List<XFile> imageFileList, XFile? video) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
+    List<String> imagesByte = List<String>.empty(growable: true);
 
-    List<File> listFile =
-        imageFileList!.map((image) => File(image.path)).toList();
+    if (imageFileList.isNotEmpty) {
+      List<File> listFile =
+          imageFileList.map((image) => File(image.path)).toList();
+      imagesByte.addAll(listFile
+          .map((e) =>
+              "data:image/jpeg;base64," + base64.encode(e.readAsBytesSync()))
+          .toList());
+    }
+
     File videoFile;
 
     Map data = {
-      'described': described,
+      "described": described,
+      "images": imagesByte.isEmpty ? [] : imagesByte,
+      "videos": []
     };
 
-    var request = http.MultipartRequest("Post", Uri.parse("http://192.168.1.9:8000/api/v1/posts/create"));
-    for(var image in _imageFileList!){
-        request.files.add(await http.MultipartFile.fromPath("images", image.path));
+    var body = json.encode(data);
+    var dio = Dio(BaseOptions(
+      baseUrl: urlApi,
+      connectTimeout: 30000,
+      receiveTimeout: 30000,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    ));
+    var response = await dio.post("/posts/create", data: data);
+    if (response.statusCode == 200) {
+      print("success");
+    } else {
+      print("failed");
     }
-
-    request.fields["described"] = described;
-
-    Map<String, String> headers = {
-      "Accept": "application/json",
-      "Authorization": "Bearer $token"
-    };
-
-    request.headers.addAll(headers);
-
-    var jsonResponse = null;
-
-    // var response = await http.post(
-    //     Uri.parse("http://192.168.1.9:8000/api/v1/posts/create"),
-    //     headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'},
-    //     body: data);
-    var response = await request.send();
-    response.stream.transform(utf8.decoder).listen((value) {
-      print(value);
-    });
-    print("A");
   }
 }
