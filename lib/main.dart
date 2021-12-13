@@ -10,6 +10,8 @@ import 'package:halo/screens/postdetail/post_detail.dart';
 import 'package:halo/screens/register/error_screen.dart';
 import 'package:halo/screens/register/register_screen.dart';
 import 'package:halo/constants.dart';
+import 'package:halo/screens/profile/profile_screen.dart';
+import 'package:halo/screens/profile/profile_setting.dart';
 
 import 'screens/welcome/welcomescreen.dart';
 
@@ -36,7 +38,9 @@ class MyApp extends StatelessWidget {
         '/newpost': (context) => const NewPost(),
         '/main': (context) => const MainScreen(),
         '/requestsAddFriend': (context) => const RequestsAddFriendsScreen(),
-        '/searchFriend': (context) => const SearchFriendScreen()
+        '/searchFriend': (context) => const SearchFriendScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/profile_setting': (context) => const ProfileSetting(),
       },
       theme: ThemeData(
         fontFamily: "OpenSans",
