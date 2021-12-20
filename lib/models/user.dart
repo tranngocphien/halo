@@ -1,8 +1,7 @@
 class User {
-  late String id;
-  late String username;
-  late String phonenumber;
-  late String avatar;
+  final String id;
+  final String username;
+  final String phonenumber;
 
-  User(this.id, this.username, this.phonenumber, [this.avatar = "1.jpeg"]);
+  User({required this.id, required this.username, required this.phonenumber});
 }

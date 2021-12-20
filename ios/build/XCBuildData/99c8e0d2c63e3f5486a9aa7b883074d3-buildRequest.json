@@ -1,0 +1,61 @@
+{
+  "_buildCommand2" : {
+    "command" : "prepareForIndexing",
+    "enableIndexBuildArena" : false,
+    "targets" : null
+  },
+  "buildCommand" : "build",
+  "configuredTargets" : [
+    {
+      "guid" : "bfdfe7dc352907fc980b868725387e989da425bb6d6d5d8dbb95e4afffb82217"
+    },
+    {
+      "guid" : "bfdfe7dc352907fc980b868725387e98312b4bc59bbbe2c06c205bf4da6737f5"
+    },
+    {
+      "guid" : "bfdfe7dc352907fc980b868725387e98355cff7d758029119bc2218cc297bc97"
+    },
+    {
+      "guid" : "bfdfe7dc352907fc980b868725387e98839a1650b1f10605b2db52456c9e6468"
+    },
+    {
+      "guid" : "bfdfe7dc352907fc980b868725387e98bf764fd5de43d0e244cbe6e2f69c1731"
+    },
+    {
+      "guid" : "bfdfe7dc352907fc980b868725387e98b35b2234c62e83383ef7c2509ddd49f7"
+    }
+  ],
+  "containerPath" : "/Users/yaya/Desktop/halo/ios/Pods/Pods.xcodeproj",
+  "continueBuildingAfterErrors" : true,
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "build",
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "",
+      "buildProductsPath" : "",
+      "derivedDataPath" : "/Users/yaya/Library/Developer/Xcode/DerivedData",
+      "indexDataStoreFolderPath" : "/Users/yaya/Library/Developer/Xcode/DerivedData/Pods-bsqexwkrhbpwfgepgfmecdrzvdrr/Index/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/yaya/Library/Developer/Xcode/DerivedData/Pods-bsqexwkrhbpwfgepgfmecdrzvdrr/Index/PrecompiledHeaders",
+      "pchPath" : ""
+    },
+    "configurationName" : "Release",
+    "overrides" : {
+      "synthesized" : {
+        "table" : {
+          "ENABLE_PREVIEWS" : "NO"
+        }
+      }
+    }
+  },
+  "qos" : "default",
+  "schemeCommand" : "launch",
+  "schemeCommand2" : "launch",
+  "shouldCollectMetrics" : false,
+  "showNonLoggedProgress" : true,
+  "useDryRun" : true,
+  "useImplicitDependencies" : false,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : false
+}

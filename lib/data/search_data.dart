@@ -1,9 +1,9 @@
-import 'package:zalo/data/data.dart';
-import 'package:zalo/models/models.dart';
+import 'package:halo/data/data.dart';
+import 'package:halo/models/models.dart';
 
 class SearchData {
   // 5 từ khoá tìm kiếm gần đây
-  static List<String> searchKeyword = [
+  static List<String> searched_word = [
     'phien tran',
     'Minh Hai',
     'Hai trung',
@@ -12,6 +12,11 @@ class SearchData {
   ];
 
   // 10 cuộc hội thoại tìm kiếm gần đây
-  static List<Conversation> recentSearchConversation =
-      ConversationData.conversationList;
+  static List<Map<String, dynamic>> searched_chat = [];
+
+  static List<Map<String, dynamic>> groupChatList = [];
+
+  static List<Map<String, dynamic>> friendList = [];
+
+  static List<Chat> cached_chat = [];
 }

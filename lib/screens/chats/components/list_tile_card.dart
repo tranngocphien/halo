@@ -4,7 +4,7 @@ import 'package:halo/models/models.dart';
 import 'package:halo/icons/icons.dart';
 
 class ListTileCard extends StatefulWidget {
-  final dynamic chat;
+  final Chat chat;
 
   const ListTileCard({required this.chat, Key? key}) : super(key: key);
 

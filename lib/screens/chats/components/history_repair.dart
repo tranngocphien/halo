@@ -118,7 +118,8 @@ class _HistoryRepairState extends State<HistoryRepair> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            SearchData.searched_chat[index]['chatName'],
+                            SearchData.searched_chat[index]['chatName']
+                                as String,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
