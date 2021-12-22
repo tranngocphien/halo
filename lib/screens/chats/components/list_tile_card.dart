@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
 import 'package:halo/models/models.dart';
 import 'package:halo/icons/icons.dart';
+import 'package:halo/screens/chats/components/utils.dart';
 
 class ListTileCard extends StatefulWidget {
   final Chat chat;
@@ -13,12 +14,33 @@ class ListTileCard extends StatefulWidget {
 }
 
 class _ListTileCardState extends State<ListTileCard> {
+  late Chat chat;
+  late Message lastMessage;
+  late String content = "";
+  @override
+  void initState() {
+    super.initState();
+    chat = widget.chat;
+    lastMessage = chat.message[chat.message.length - 1];
+    if (chat.partner is User) {
+      content = lastMessage.sender.id == User.userId
+          ? "You: ${lastMessage.content}"
+          : lastMessage.content;
+    } else {
+      if (lastMessage.sender.id == User.userId) {
+        content = "You: ${lastMessage.content}";
+      } else {
+        content = "${lastMessage.sender.username}: ${lastMessage.content}";
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
           setState(() {
-            widget.chat.message.unread = false;
+            lastMessage.unread = false;
           });
           Navigator.pushNamed(context, '/message');
         },
@@ -33,7 +55,7 @@ class _ListTileCardState extends State<ListTileCard> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(30),
                   child: Image.network(
-                    '$urlFiles/${widget.chat.partner is User ? widget.chat.partner.avatar : widget.chat.partner[0].avatar}',
+                    '$urlFiles/${chat.partner is User ? chat.partner.avatar : chat.partner[0].avatar}',
                     fit: BoxFit.cover,
                     width: 70.0,
                     height: 70.0,
@@ -61,34 +83,36 @@ class _ListTileCardState extends State<ListTileCard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.chat.chatName,
+                              chat.chatName,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: changeStyle(true, false, false),
                             ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Container(
-                                    constraints:
-                                        const BoxConstraints(maxWidth: 235),
-                                    child: Text(
-                                      widget.chat.message.content,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: changeStyle(false, true, false),
+                            Container(
+                              child: Expanded(
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      constraints:
+                                          const BoxConstraints(maxWidth: 210),
+                                      child: Text(
+                                        content,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: changeStyle(false, true, false),
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 2),
-                                  const Text('•'),
-                                  const SizedBox(width: 2),
-                                  Text(
-                                    formatTime(widget.chat.message.createdAt),
-                                    style: const TextStyle(
-                                        fontSize: smallSize,
-                                        color: subtitleColor),
-                                  ),
-                                ],
+                                    const SizedBox(width: 2),
+                                    const Text('•'),
+                                    const SizedBox(width: 2),
+                                    Text(
+                                      formatTime(lastMessage.createdAt),
+                                      style: const TextStyle(
+                                          fontSize: smallSize,
+                                          color: subtitleColor),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -105,7 +129,7 @@ class _ListTileCardState extends State<ListTileCard> {
                                 child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      widget.chat.isPined
+                                      chat.isPined
                                           ? const Padding(
                                               padding:
                                                   EdgeInsets.only(right: 2),
@@ -117,7 +141,7 @@ class _ListTileCardState extends State<ListTileCard> {
                                             )
                                           : const Text(""),
                                       const SizedBox(width: 3),
-                                      widget.chat.isMuted
+                                      chat.isMuted
                                           ? const Padding(
                                               padding:
                                                   EdgeInsets.only(right: 2),
@@ -131,7 +155,7 @@ class _ListTileCardState extends State<ListTileCard> {
                                           : const Text(""),
                                     ]),
                               ),
-                              widget.chat.message.unread == true
+                              lastMessage.unread == true
                                   ? const CircleAvatar(
                                       radius: 6,
                                       backgroundColor: Colors.blue,
@@ -150,37 +174,15 @@ class _ListTileCardState extends State<ListTileCard> {
     if (isTitle) {
       return TextStyle(
         fontSize: mediumSize,
-        color: widget.chat.message.unread ? textBoldColor : textColor,
-        fontWeight:
-            widget.chat.message.unread ? FontWeight.w600 : FontWeight.w500,
+        color: lastMessage.unread ? textBoldColor : textColor,
+        fontWeight: lastMessage.unread ? FontWeight.w600 : FontWeight.w500,
       );
     }
 
     return TextStyle(
       fontSize: smallSize,
-      color: widget.chat.message.unread ? textColor : subtitleColor,
+      color: lastMessage.unread ? textColor : subtitleColor,
       fontWeight: FontWeight.w500,
     );
-  }
-
-  String formatTime(DateTime created) {
-    DateTime curTime = DateTime.now();
-    String result = "";
-
-    String day = created.day.toString();
-    String month = created.month.toString();
-    String hour = created.hour.toString();
-    String second = created.second.toString();
-    int difHours = curTime.difference(created).inHours;
-
-    if (curTime.day - created.day > 7) {
-      result = '$day th $month';
-    } else if (difHours > 24 || curTime.day != created.day) {
-      int weekday = created.weekday + 1;
-      result = weekday != 8 ? 'T$weekday' : 'CN';
-    } else {
-      result = '$hour:$second';
-    }
-    return result;
   }
 }

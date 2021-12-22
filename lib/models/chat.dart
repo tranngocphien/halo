@@ -5,7 +5,7 @@ class Chat {
   late String id;
   late String chatName;
   late dynamic partner;
-  late Message message;
+  late List<Message> message;
   late bool isMuted;
   late DateTime mutedTo;
   late bool isPined;
@@ -33,33 +33,64 @@ class Chat {
       id: chat['_id'],
       chatName: chat['name'],
       partner: partner,
-      message: Message.fromContent("Thành viên: $username"),
+      message: [Message.fromContent("Thành viên: $username")],
       isMuted: false,
       isPined: false,
     );
   }
 
   factory Chat.fromJson(json) {
-    final chat = json['chat'];
-    final lastMessage = json['last_message'];
+    final chat = json;
+    final messages = chat['message'];
     String chatName = "";
     dynamic partner;
-    String content = "";
-    DateTime createdAt =
-        DateTime.parse(lastMessage["createdAt"]).add(const Duration(hours: 7));
-    DateTime updatedAt =
-        DateTime.parse(lastMessage["createdAt"]).add(const Duration(hours: 7));
 
     final member = chat['member'];
+
+    var mapAvatar = member
+        .map((user) => {user['avatar']['_id']: user['avatar']['fileName']});
+    mapAvatar = mapAvatar.reduce((map1, map2) => map1..addAll(map2));
+
+    List<Message> message = [];
+
+    for (var i = 0; i < messages.length; i++) {
+      final tmp = messages[i];
+      DateTime createdAt =
+          DateTime.parse(tmp["createdAt"]).add(const Duration(hours: 7));
+      DateTime updatedAt =
+          DateTime.parse(tmp["createdAt"]).add(const Duration(hours: 7));
+      message.add(Message(
+        id: tmp["_id"],
+        sender: User(tmp["user"]["_id"], tmp["user"]["username"], "",
+            mapAvatar[tmp["user"]["avatar"]], ""),
+        content: tmp["content"],
+        createdAt: DateTime(
+          createdAt.year,
+          createdAt.month,
+          createdAt.day,
+          createdAt.hour,
+          createdAt.minute,
+          createdAt.second,
+          createdAt.microsecond,
+        ),
+        updatedAt: DateTime(
+          updatedAt.year,
+          updatedAt.month,
+          updatedAt.day,
+          updatedAt.hour,
+          updatedAt.minute,
+          updatedAt.second,
+          updatedAt.microsecond,
+        ),
+        unread: false,
+      ));
+    }
 
     if (chat['type'] == "PRIVATE_CHAT") {
       final other = User.userId == member[0]['_id'] ? member[1] : member[0];
       chatName = other['username'];
-      partner =
-          User(other["_id"], chatName, "", other['avatar']["fileName"], "");
-      content = User.userId == lastMessage["senderId"]
-          ? 'You: ${lastMessage['content']}'
-          : lastMessage['content'];
+      partner = User(
+          other["_id"], other['username'], "", other['avatar']["fileName"], "");
     } else {
       chatName = chat["name"];
       partner = member.map((user) {
@@ -67,45 +98,16 @@ class Chat {
           return User(user["_id"], user["username"], "",
               user['avatar']["fileName"], "");
         }
+        return null;
       }).toList();
-      if (lastMessage['senderId'] == User.userId) {
-        content = 'You: ${lastMessage['content']}';
-      } else {
-        partner.removeWhere((value) => value == null);
-
-        User sender = partner
-            .where((user) => user.id == lastMessage['senderId'])
-            .toList()[0];
-        content = '${sender.username}: ${lastMessage['content']}';
-      }
+      partner.removeWhere((user) => user == null);
     }
 
     return Chat(
       id: chat['_id'],
       chatName: chatName,
       partner: partner,
-      message: Message(
-        id: "",
-        sender: User.fromEmpty(),
-        content: content,
-        createdAt: DateTime(
-            createdAt.year,
-            createdAt.month,
-            createdAt.day,
-            createdAt.hour,
-            createdAt.minute,
-            createdAt.second,
-            createdAt.microsecond),
-        updatedAt: DateTime(
-            updatedAt.year,
-            updatedAt.month,
-            updatedAt.day,
-            updatedAt.hour,
-            updatedAt.minute,
-            updatedAt.second,
-            updatedAt.microsecond),
-        unread: true,
-      ),
+      message: message,
       isMuted: false,
       isPined: false,
     );

@@ -18,6 +18,7 @@ class PopupMenu extends StatelessWidget {
       onSelected: (value) {
         switch (value) {
           case 'createGroup':
+            Navigator.pushNamed(context, '/createGroup');
             break;
           case 'addFriend':
             Navigator.pushNamed(context, '/searchFriend');

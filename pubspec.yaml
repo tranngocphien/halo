@@ -62,3 +62,11 @@ flutter:
     - family: Call
       fonts:
         - asset: assets/fonts/Call.ttf
+
+    - family: Notifications_off
+      fonts:
+        - asset: assets/fonts/Notifications_off.ttf
+
+    - family: ListIcon
+      fonts:
+        - asset: assets/fonts/List.ttf

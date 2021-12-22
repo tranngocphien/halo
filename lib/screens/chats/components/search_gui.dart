@@ -1,14 +1,10 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:halo/api/search_api.dart';
 import 'package:halo/constants.dart';
 import 'package:halo/data/data.dart';
 import 'package:halo/icons/icons.dart';
 import 'package:halo/models/models.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'package:tiengviet/tiengviet.dart';
+import 'package:halo/screens/chats/components/components.dart';
 
 class SearchGUI extends StatefulWidget {
   late String searchValue;
@@ -20,7 +16,9 @@ class SearchGUI extends StatefulWidget {
 }
 
 class _SearchGUIState extends State<SearchGUI> {
-  late bool finded_contact = false;
+  late Widget contactWidget;
+  late Widget messageWidget;
+  final TextEditingController _textController = TextEditingController();
 
   @override
   void initState() {
@@ -30,7 +28,7 @@ class _SearchGUIState extends State<SearchGUI> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3, // length of tabs
+      length: 1, // length of tabs
       initialIndex: 0,
       child: Column(
         // crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -48,14 +46,12 @@ class _SearchGUIState extends State<SearchGUI> {
                 unselectedLabelColor: subtitleColor,
                 tabs: [
                   Tab(text: 'TẤT CẢ'),
-                  Tab(text: 'LIÊN HỆ'),
-                  Tab(text: 'TIN NHẮN'),
                 ],
               ),
             ),
           ),
           Container(
-            height: 500,
+            height: 600,
             decoration: const BoxDecoration(
               border: Border(
                 top: BorderSide(
@@ -68,32 +64,6 @@ class _SearchGUIState extends State<SearchGUI> {
             child: TabBarView(
               children: [
                 buildContactSearch(),
-                finded_contact == false
-                    ? const Center(
-                        child: Text("Không tìm thấy liên hệ nào",
-                            style: TextStyle(fontSize: largeSize)))
-                    : Container(
-                        child: const Center(
-                          child: Text(
-                            'Display Tab 2',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                Container(
-                  child: const Center(
-                    child: Text(
-                      'Display Tab 3',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -101,6 +71,48 @@ class _SearchGUIState extends State<SearchGUI> {
       ),
     );
   }
+
+  Widget buildActiveSearch() => Container(
+        height: 32,
+        padding: const EdgeInsets.only(left: 8),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+        ),
+        child: TextField(
+          onChanged: (value) {
+            setState(() {
+              if (value.isEmpty) {
+                Navigator.pop(context);
+              }
+              _textController.text = value;
+              _textController.selection = TextSelection.fromPosition(
+                  TextPosition(offset: _textController.text.length));
+            });
+          },
+          controller: _textController,
+          focusNode: FocusNode(),
+          autofocus: true,
+          style: const TextStyle(fontSize: mediumSize),
+          decoration: InputDecoration(
+              isDense: true,
+              hintText: "Tìm bạn bè, tin nhắn...",
+              border: InputBorder.none,
+              hintStyle: const TextStyle(
+                fontSize: smallSize,
+                color: subtitleColor,
+              ),
+              suffixIcon: _textController.text.isNotEmpty
+                  ? IconButton(
+                      onPressed: () {
+                        _textController.clear();
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.cancel, color: Colors.black),
+                    )
+                  : null),
+        ),
+      );
 
   // ===================== Xây dựng tìm kiếm cho bạn bè, group chat =====================
 
@@ -137,6 +149,15 @@ class _SearchGUIState extends State<SearchGUI> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Container(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: textColor,
+                                  width: 0.08,
+                                ),
+                              ),
+                            ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -204,27 +225,41 @@ class _SearchGUIState extends State<SearchGUI> {
                         const SizedBox(width: 10),
                         Flexible(
                           flex: 1,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                groupChat.chatName,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: mediumSize),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.only(bottom: 8),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: textColor,
+                                  width: 0.08,
+                                ),
                               ),
-                              Text(
-                                groupChat.message.content,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: mediumSize,
-                                    color: subtitleColor),
-                              ),
-                            ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  groupChat.chatName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: mediumSize),
+                                ),
+                                Text(
+                                  groupChat
+                                      .message[groupChat.message.length - 1]
+                                      .content,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: smallSize,
+                                      color: subtitleColor),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -236,28 +271,145 @@ class _SearchGUIState extends State<SearchGUI> {
           );
   }
 
-  Widget buildListTile(final friendList, groupChatList) {
-    if (friendList.isEmpty && groupChatList.isEmpty) {
-      return Container(height: 0);
-    }
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(top: 10, left: 10),
-          child: Text(
-            "Liên hệ (${friendList.length + groupChatList.length})",
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: mediumSize,
+  Widget buildMessageListTile(final messageList) {
+    return messageList.isEmpty
+        ? const SizedBox(height: 0)
+        : Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: ListView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              itemCount: messageList.length,
+              itemBuilder: (context, index) {
+                Chat chat = messageList[index]["chat"];
+                List<int> indexList = messageList[index]["index"];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MessageMatch(
+                                chat: chat, indexList: indexList)));
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 5),
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundColor: Colors.transparent,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image.network(
+                              '$urlFiles/${chat.partner is User ? chat.partner.avatar : chat.partner[0].avatar}',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.only(bottom: 10),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: textColor,
+                                  width: 0.08,
+                                ),
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  chat.chatName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: mediumSize),
+                                ),
+                                Text(
+                                  '${indexList.length} tin nhắn trùng khớp',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: smallSize,
+                                      color: subtitleColor),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
+          );
+  }
+
+  Widget buildListTile(friendList, groupChatList, messageList) {
+    if (friendList.isEmpty && groupChatList.isEmpty && messageList.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.only(top: 15),
+        child: Column(children: [
+          const CircleAvatar(
+            radius: 20,
+            child: Icon(ListIcon.listIcon, color: Colors.white),
           ),
-        ),
-        buildFriendListTile(friendList),
-        buildGroupListTile(groupChatList),
-        const Divider(thickness: 10)
-      ],
+          Container(
+            margin: const EdgeInsets.only(top: 15),
+            child: const Text("Không tìm thấy kết quả phù hợp",
+                style: TextStyle(fontSize: mediumSize)),
+          ),
+        ]),
+      );
+    }
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          friendList.isEmpty && groupChatList.isEmpty
+              ? Container(height: 0)
+              : Container(
+                  margin: const EdgeInsets.only(top: 10, left: 10),
+                  child: Text(
+                    "Liên hệ (${friendList.length + groupChatList.length})",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: mediumSize,
+                    ),
+                  ),
+                ),
+          buildFriendListTile(friendList),
+          buildGroupListTile(groupChatList),
+          ((friendList.isNotEmpty || groupChatList.isNotEmpty) &&
+                  messageList.isNotEmpty)
+              ? const Divider(thickness: 10)
+              : const SizedBox(height: 0),
+          messageList.isEmpty
+              ? Container(height: 0)
+              : Container(
+                  margin: const EdgeInsets.only(top: 10, left: 10),
+                  child: Text(
+                    "Tin nhắn (${messageList.length})",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: mediumSize,
+                    ),
+                  ),
+                ),
+          buildMessageListTile(messageList)
+        ],
+      ),
     );
   }
 
@@ -265,11 +417,14 @@ class _SearchGUIState extends State<SearchGUI> {
   Widget buildContactSearch() {
     // Danh sách bạn khớp.
     return SearchData.friendList.isNotEmpty &&
-            SearchData.groupChatList.isNotEmpty
-        ? buildListTile(parseFriends(SearchData.friendList),
-            parseGroupChats(SearchData.groupChatList))
-        : FutureBuilder<List<List<dynamic>>>(
-            future: fetchFriendsAndGroupChats(),
+            SearchData.groupChatList.isNotEmpty &&
+            SearchData.cached_chat.isNotEmpty
+        ? buildListTile(
+            parseFriends(SearchData.friendList, widget.searchValue),
+            parseGroupChats(SearchData.groupChatList, widget.searchValue),
+            parseMessage(SearchData.cached_chat, widget.searchValue))
+        : FutureBuilder<List<dynamic>>(
+            future: fetchSearchData(widget.searchValue),
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
@@ -285,157 +440,11 @@ class _SearchGUIState extends State<SearchGUI> {
                       ),
                     );
                   } else {
-                    return buildListTile(snapshot.data![0], snapshot.data![1]);
+                    return buildListTile(snapshot.data![0], snapshot.data![1],
+                        snapshot.data![2]);
                   }
               }
             },
           );
-  }
-
-  Future<List<List<dynamic>>> fetchFriendsAndGroupChats() async {
-    List<List<dynamic>> parsed_result = [];
-    final prefs = await SharedPreferences.getInstance();
-
-    final token = prefs.getString('token') ?? "";
-    //print(token);
-    final response1 = await http.post(Uri.parse('$urlApi/friends/list'),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
-
-    final response2 = await http.get(Uri.parse('$urlApi/chats/getGroupChats'),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
-    if (response1.statusCode == 200) {
-      final result = json
-          .decode(response1.body)["data"]["friends"]
-          .cast<Map<String, dynamic>>();
-      SearchData.friendList = await result;
-      parsed_result.add(parseFriends(result));
-    } else {
-      throw Exception('Unable to fetch friend list from the REST API');
-    }
-
-    if (response2.statusCode == 200) {
-      final result =
-          json.decode(response2.body)["chat"].cast<Map<String, dynamic>>();
-      SearchData.groupChatList = await result;
-      parsed_result.add(parseGroupChats(result));
-    } else {
-      throw Exception('Unable to fetch group chats from the REST API');
-    }
-
-    return parsed_result;
-  }
-
-  List<User> parseFriends(final respond) {
-    List<User> parsedMatch = [];
-
-    List<String> splitedSearchText =
-        TiengViet.parse(widget.searchValue.toLowerCase()).split(" ");
-
-    for (var i = 0; i < respond.length; i++) {
-      var username = TiengViet.parse(respond[i]["username"].toLowerCase());
-      if (username.split(" ").length < splitedSearchText.length) {
-        continue;
-      } else {
-        var j = 0;
-        for (; j < splitedSearchText.length; j++) {
-          if (!username.contains(splitedSearchText[j])) break;
-        }
-        if (j == splitedSearchText.length) {
-          // print(respond[i]);
-          parsedMatch.add(User.fromJson(respond[i]));
-        }
-      }
-    }
-    return parsedMatch;
-  }
-
-  List<Chat> parseGroupChats(final respond) {
-    List<Chat> parsedMacth = [];
-
-    List<String> splitedSearchText =
-        TiengViet.parse(widget.searchValue.toLowerCase()).split(" ");
-
-    for (var i = 0; i < respond.length; i++) {
-      var nameList = respond[i]["member"].map((user) {
-        if (user["_id"] == User.userId) {
-          return "";
-        } else {
-          return user["username"];
-        }
-      }).toList();
-
-      nameList.removeWhere((value) => value == "");
-
-      for (var j = 0; j < nameList.length; j++) {
-        var username = TiengViet.parse(nameList[j].toLowerCase());
-        if (username.split(" ").length < splitedSearchText.length) {
-          continue;
-        } else {
-          var k = 0;
-          for (; k < splitedSearchText.length; k++) {
-            if (!username.contains(splitedSearchText[k])) {
-              break;
-            }
-          }
-          if (k == splitedSearchText.length) {
-            parsedMacth.add(Chat.fromGroup(username, respond[i]));
-          }
-        }
-      }
-    }
-
-    return parsedMacth;
-  }
-
-  // ===================== Xây dựng tìm kiếm cho tin nhắn =====================
-
-  Future<List<List<dynamic>>> fetchChatsMessages() async {
-    List<List<dynamic>> parsed_result = [];
-    final prefs = await SharedPreferences.getInstance();
-
-    final token = prefs.getString('token') ?? "";
-
-    final List<Chat> chatList = SearchData.cached_chat;
-
-    for (var c = 0; c < chatList.length; c++) {
-      var chatId = chatList[c].id;
-      var chatUrl = '$urlApi/chats/getMessages/$chatId';
-      final response = await http.get(Uri.parse(chatUrl),
-          headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
-
-      if (response.statusCode == 200) {
-        final result =
-            json.decode(response.body)["data"].cast<Map<String, dynamic>>();
-        SearchData.friendList = await result;
-        parsed_result.add(parseMessages(result));
-      } else {
-        throw Exception('Unable to fetch chat messages from the REST API');
-      }
-    }
-    return parsed_result;
-  }
-
-  List<User> parseMessages(final respond) {
-    List<User> parsedMatch = [];
-
-    List<String> splitedSearchText =
-        TiengViet.parse(widget.searchValue.toLowerCase()).split(" ");
-
-    for (var i = 0; i < respond.length; i++) {
-      var username = TiengViet.parse(respond[i]["username"].toLowerCase());
-      if (username.split(" ").length < splitedSearchText.length) {
-        continue;
-      } else {
-        var j = 0;
-        for (; j < splitedSearchText.length; j++) {
-          if (!username.contains(splitedSearchText[j])) break;
-        }
-        if (j == splitedSearchText.length) {
-          // print(respond[i]);
-          parsedMatch.add(User.fromJson(respond[i]));
-        }
-      }
-    }
-    return parsedMatch;
   }
 }

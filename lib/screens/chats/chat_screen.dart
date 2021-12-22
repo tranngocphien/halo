@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:halo/api/chat_api.dart';
 import 'package:halo/data/data.dart';
 import 'package:halo/models/models.dart';
 import 'package:halo/constants.dart';
@@ -248,7 +249,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                 )),
                             const SizedBox(height: 10),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/searchFriend');
+                              },
                               child: const Padding(
                                 padding: EdgeInsets.only(left: 12, right: 12),
                                 child: Text("Tìm thêm bạn",
@@ -595,15 +598,23 @@ class _ChatScreenState extends State<ChatScreen> {
           focusNode: FocusNode(),
           autofocus: true,
           style: const TextStyle(fontSize: mediumSize),
-          decoration: const InputDecoration(
-            isDense: true,
-            hintText: "Tìm bạn bè, tin nhắn...",
-            border: InputBorder.none,
-            hintStyle: TextStyle(
-              fontSize: smallSize,
-              color: subtitleColor,
-            ),
-          ),
+          decoration: InputDecoration(
+              isDense: true,
+              hintText: "Tìm bạn bè, tin nhắn...",
+              border: InputBorder.none,
+              hintStyle: const TextStyle(
+                fontSize: smallSize,
+                color: subtitleColor,
+              ),
+              suffixIcon: _textController.text.isNotEmpty
+                  ? IconButton(
+                      onPressed: () {
+                        _textController.clear();
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.cancel, color: Colors.black),
+                    )
+                  : null),
         ),
       );
 
@@ -648,37 +659,4 @@ class _ChatScreenState extends State<ChatScreen> {
           itemCount: SearchData.searched_chat.length,
         ),
       );
-
-  Future<List<Chat>> fetchChats() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    final token = prefs.getString('token') ?? "";
-
-    final response = await http.get(Uri.parse('$urlApi/chats/getChats'),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
-    if (response.statusCode == 200) {
-      return parseChats(response.body);
-    } else {
-      throw Exception('Unable to fetch products from the REST API');
-    }
-  }
-
-  List<Chat> parseChats(dynamic responseBody) {
-    //print(responseBody);
-    final chats =
-        json.decode(responseBody)["chat"].cast<Map<String, dynamic>>();
-    final lastMessages =
-        json.decode(responseBody)["last_message"].cast<Map<String, dynamic>>();
-
-    final parsed = [];
-    for (var i = 0; i < chats.length; i++) {
-      parsed.add({"chat": chats[i], "last_message": lastMessages[i]});
-    }
-
-    List<Chat> result =
-        parsed.map<Chat>((json) => Chat.fromJson(json)).toList();
-    result.sort((chat1, chat2) =>
-        chat1.message.createdAt.compareTo(chat2.message.createdAt));
-    return result.reversed.toList();
-  }
 }

@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
         '/requestsAddFriend': (context) => const RequestsAddFriendsScreen(),
         '/searchFriend': (context) => const SearchFriendScreen(),
         '/historyRepair': (context) => const HistoryRepair(),
+        '/createGroup': (context) => const CreateGroup(),
       },
       theme: ThemeData(
         fontFamily: "OpenSans",
