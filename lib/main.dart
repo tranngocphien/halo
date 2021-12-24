@@ -10,6 +10,8 @@ import 'package:halo/screens/post/newpost/new_post_screen.dart';
 import 'package:halo/screens/postdetail/post_detail.dart';
 import 'package:halo/screens/register/error_screen.dart';
 import 'package:halo/screens/register/register_screen.dart';
+import 'package:halo/screens/profile/profile_screen.dart';
+import 'package:halo/screens/profile/profile_setting.dart';
 
 import 'screens/welcome/welcomescreen.dart';
 
@@ -28,15 +30,17 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       initialRoute: '/',
       routes: {
-        '/' : (context) => const WelcomeScreen(),
-        '/login' : (context) => const LoginScreen(),
-        '/register' : (context) => const RegisterScreen(),
-        '/chatspage' : (context) => const ChatScreen(),
-        '/message' : (context) => const MessageScreen(),
+        '/': (context) => const WelcomeScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/chatspage': (context) => const ChatScreen(),
+        '/message': (context) => const MessageScreen(),
         '/newpost': (context) => const NewPost(),
-        '/main' : (context) => MainScreen(),
-        '/requestsAddFriend' : (context) => RequestsAddFriendsScreen(),
-        '/searchFriend' : (context) => SearchFriendScreen()
+        '/main': (context) => MainScreen(),
+        '/requestsAddFriend': (context) => RequestsAddFriendsScreen(),
+        '/searchFriend': (context) => SearchFriendScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/profile_setting': (context) => const ProfileSetting(),
       },
       theme: ThemeData(
         primaryColor: primaryColor,
