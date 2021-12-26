@@ -24,7 +24,7 @@ class MessageScreen extends StatelessWidget {
           : Column(
               children: [
                 Expanded(
-                    child: Column(
+                    child: ListView(
                   children: [
                     ...messageController.chat
                         .map((element) => Message(message: element))
