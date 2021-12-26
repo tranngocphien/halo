@@ -68,7 +68,8 @@ class MessageController extends GetxController {
     ));
     var response = await dio.post("/chats/send", data: data);
     if(response.statusCode == 200){
-      chat.add(MessageModel.fromJson(response.data['data']));
+      // chat.add(MessageModel.fromJson(response.data['data']));
+      getMessages();
     }
 
   }
