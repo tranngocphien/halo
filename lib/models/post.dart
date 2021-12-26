@@ -2,6 +2,7 @@ import 'image_model.dart';
 
 class PostModel {
   final String username;
+  final String avatar;
   final String content;
   final String id;
   final List<ImageModel> image;
@@ -15,6 +16,7 @@ class PostModel {
 
   PostModel(
       {required this.username,
+        required this.avatar,
       required this.content,
       required this.id,
       required this.image,
@@ -28,6 +30,7 @@ class PostModel {
 
   factory PostModel.fromMap(Map<String, dynamic> json) => PostModel(
       username: json["author"]["username"],
+      avatar: json['author']['avatar']['fileName'],
       content: json["described"] ?? "",
       id: json["_id"],
       image: List<ImageModel>.from(
