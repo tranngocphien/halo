@@ -14,8 +14,12 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int pageIndex = 0;
-  List<Widget> pageLists = <Widget>[ChatScreen(),ContactScreen(), NewFeedScreen(), ProfileScreen() ];
-
+  List<Widget> pageLists = <Widget>[
+    ChatScreen(),
+    ContactScreen(),
+    NewFeedScreen(),
+    ProfileScreen()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +27,19 @@ class _MainScreenState extends State<MainScreen> {
       body: pageLists[pageIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: pageIndex,
-        onTap: (value){
+        onTap: (value) {
           setState(() {
             pageIndex = value;
           });
         },
         type: BottomNavigationBarType.fixed,
-        items:const [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.message), label: "Tin nhắn"),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: "Danh bạ"),
-          BottomNavigationBarItem(icon: Icon(Icons.history_sharp), label: "Nhật ký"),
-          BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: "Cá nhân")
+          BottomNavigationBarItem(
+              icon: Icon(Icons.history_sharp), label: "Nhật ký"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle), label: "Cá nhân")
         ],
       ),
     );

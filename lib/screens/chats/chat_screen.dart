@@ -52,7 +52,10 @@ class ChatScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => MessageScreen(chatModel: chatController.chats[index],)),
+                                    builder: (context) => MessageScreen(
+                                          chatModel:
+                                              chatController.chats[index],
+                                        )),
                               );
                             },
                             child: ListTile(

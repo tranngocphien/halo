@@ -11,50 +11,61 @@ class Body extends StatelessWidget {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.fromLTRB(kDefaultPadding, 0, kDefaultPadding, kDefaultPadding),
+          padding: EdgeInsets.fromLTRB(
+              kDefaultPadding, 0, kDefaultPadding, kDefaultPadding),
           color: primaryColor,
           child: Row(
             children: [
               FillOutlineButton(press: () {}, text: "Recent Message"),
               const SizedBox(width: kDefaultPadding),
-              FillOutlineButton(text: "Active", press: (){}, isFilled: false,)
+              FillOutlineButton(
+                text: "Active",
+                press: () {},
+                isFilled: false,
+              )
             ],
           ),
         ),
-        Expanded(child:
-          Container(
-            decoration: const BoxDecoration(
+        Expanded(
+            child: Container(
+          decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20)
-              )
-            ),
-            child: ListView(
-              children:  [
-                InkWell(
-                  onTap: (){
-                    Navigator.pushNamed(context, "/message");
-                  },
-                  child: ListTile(
-                    leading: Icon(Icons.account_circle, size: 40,),
-                    title: Text("Tên người dùng"),
-                    subtitle: Text("Tin nhắn gần đây"),
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+          child: ListView(
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, "/message");
+                },
+                child: ListTile(
+                  leading: Icon(
+                    Icons.account_circle,
+                    size: 40,
                   ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.account_circle, size: 40,),
                   title: Text("Tên người dùng"),
                   subtitle: Text("Tin nhắn gần đây"),
                 ),
-                ListTile(
-                  leading: Icon(Icons.account_circle, size: 40,),
-                  title: Text("Tên người dùng"),
-                  subtitle: Text("Tin nhắn gần đây"),
-                )
-              ],
-            ),
-          ))
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.account_circle,
+                  size: 40,
+                ),
+                title: Text("Tên người dùng"),
+                subtitle: Text("Tin nhắn gần đây"),
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.account_circle,
+                  size: 40,
+                ),
+                title: Text("Tên người dùng"),
+                subtitle: Text("Tin nhắn gần đây"),
+              )
+            ],
+          ),
+        ))
       ],
     );
   }

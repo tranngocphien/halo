@@ -19,13 +19,11 @@ class ProfileSetting extends StatelessWidget {
         children: [
           ListTile(
             title: Text('Thông tin'),
-            onTap: (){
+            onTap: () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => UpdateProfileScreen(
-                      )));
-
+                      builder: (context) => UpdateProfileScreen()));
             },
           ),
           ListTile(
@@ -50,13 +48,11 @@ class ProfileSetting extends StatelessWidget {
           ),
           ListTile(
             title: Text('Đổi mật khẩu'),
-            onTap: (){
+            onTap: () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ChangePasswordScreen(
-                      )));
-
+                      builder: (context) => ChangePasswordScreen()));
             },
           ),
           ListTile(
