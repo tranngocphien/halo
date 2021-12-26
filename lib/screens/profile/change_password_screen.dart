@@ -1,29 +1,27 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
 
-
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+class ChangePasswordScreen extends StatefulWidget {
+  const ChangePasswordScreen({Key? key}) : super(key: key);
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
-
-  final _phoneController = TextEditingController();
+class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _passwordController = TextEditingController();
   final _rPasswordReController = TextEditingController();
-  final _usernameController = TextEditingController();
+  final _currentPasswordController = TextEditingController();
 
   var _isLoading = false;
   var _errorMsg;
-
   final _formKey = GlobalKey<FormState>();
-
 
   @override
   void initState() {
@@ -32,50 +30,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   void dispose() {
-    _phoneController.dispose();
+    _passwordController.dispose();
+    _rPasswordReController.dispose();
+    _currentPasswordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
-        title: Text("Đăng ký"),
+        title: const Text("Đổi mật khẩu"),
       ),
-      body:_isLoading? Center(child: const CircularProgressIndicator(backgroundColor: whiteColor,)): SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _errorMsg == null ? Container(): Text(_errorMsg, style: const TextStyle(
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.bold,
-                ),),
+                _errorMsg == null
+                    ? Container()
+                    : Text(
+                        _errorMsg,
+                        style: const TextStyle(
+                          color: Colors.redAccent,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                 TextFormField(
-                  controller: _phoneController,
+                  controller: _currentPasswordController,
                   style: const TextStyle(fontSize: 20),
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(hintText: "Số điện thoại"),
+                  decoration:
+                      const InputDecoration(hintText: "Mật khẩu hiện tại"),
+                  obscureText: true,
                 ),
                 const SizedBox(
-                  height: 10,
-                ),
-                TextFormField(
-                  controller: _usernameController,
-                  style: const TextStyle(fontSize: 20),
-                  decoration: InputDecoration(hintText: "Tên tài khoản"),
-                ),
-                const SizedBox(
-                  height: 10,
+                  height: 20,
                 ),
                 TextFormField(
                   controller: _passwordController,
                   style: const TextStyle(fontSize: 20),
-                  decoration: const InputDecoration(hintText: "Mật khẩu"),
+                  decoration: const InputDecoration(hintText: "Mật khẩu mới"),
                   obscureText: true,
                 ),
                 const SizedBox(
@@ -84,14 +81,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _rPasswordReController,
                   style: const TextStyle(fontSize: 20),
-                  decoration: const InputDecoration(hintText: "Nhập lại mật khẩu"),
+                  decoration:
+                      const InputDecoration(hintText: "Nhập lại mật khẩu"),
                   obscureText: true,
-                  validator: (value){
-                    if(value != _passwordController.text){
+                  validator: (value) {
+                    if (value != _passwordController.text) {
                       return "Nhập lại mật khẩu không đúng";
                     }
                   },
-
                 ),
                 const SizedBox(
                   height: 20,
@@ -107,18 +104,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     onPressed: () {
-                      print(_phoneController.text);
-                      print(_passwordController.text);
-                      if(_formKey.currentState!.validate()){
+                      if (_formKey.currentState!.validate()) {
                         setState(() {
                           _isLoading = true;
                           _errorMsg = "";
                         });
-                        register(_usernameController.text, _passwordController.text, _phoneController.text);
                       }
+                      change_password(_currentPasswordController.text,
+                          _passwordController.text);
                     },
                     child: const Text(
-                      "Đăng ký",
+                      "Đổi mật khẩu",
                       style: TextStyle(fontSize: 20),
                     ))
               ],
@@ -129,31 +125,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Future<void> register(String username, String password, String phonenumber) async {
+  Future<void> change_password(
+      String currentPassword, String newPassword) async {
     Map data = {
-      'phonenumber': phonenumber,
-      'password': password,
-      'username': username
+      'currentPassword': currentPassword,
+      'newPassword': newPassword,
     };
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? "";
+
     var jsonResponse = null;
-    var response = await http.post(Uri.parse("${urlApi}/users/register"), body: data);
-    if(response.statusCode == 201) {
+    var response = await http.post(Uri.parse("${urlApi}/users/change-password"),
+        body: data,
+        headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
+    if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
       print(jsonResponse);
-      if(jsonResponse != null) {
+      if (jsonResponse != null) {
         setState(() {
           _isLoading = false;
         });
-        Navigator.pushNamed(context, "/main");
+        Navigator.pop(context);
       }
-    }
-    else {
+    } else {
       jsonResponse = json.decode(response.body);
       setState(() {
         _isLoading = false;
       });
       _errorMsg = jsonResponse['message'];
     }
-
   }
 }

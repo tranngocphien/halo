@@ -165,7 +165,6 @@ class _NewPostState extends State<NewPost> {
       "videos": []
     };
 
-    var body = json.encode(data);
     var dio = Dio(BaseOptions(
       baseUrl: urlApi,
       connectTimeout: 30000,
