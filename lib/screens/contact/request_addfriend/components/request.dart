@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:halo/constants.dart';
 
 import 'package:halo/screens/contact/request_addfriend/requests_addfriends.dart';
-import 'package:halo/constants.dart';
 
 import 'dart:convert';
 import 'dart:io';
@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../contact_screen.dart';
+
 
 class Request extends StatefulWidget {
   final RQFriend rqFriend;
@@ -19,8 +20,8 @@ class Request extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _Request(rqFriend);
 }
-
 class _Request extends State<Request> {
+
   final RQFriend rqFriend;
 
   String deleteButtonText = "Xóa";
@@ -43,22 +44,22 @@ class _Request extends State<Request> {
               children: [
                 CircleAvatar(
                   radius: 20,
-                  backgroundImage:
-                      AssetImage("assets/images/profile_avatar.jpg"),
+                  backgroundImage: AssetImage("assets/images/profile_avatar.jpg"),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 15.0),
-                  child:
-                      Text(rqFriend.username, style: TextStyle(fontSize: 25)),
+                  child: Text(rqFriend.username, style: TextStyle(fontSize: 25)),
                 ),
               ],
             ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 10),
                   child: GestureDetector(
+
                     onTap: () async {
                       print("request add friend");
                       final prefs = await SharedPreferences.getInstance();
@@ -66,20 +67,17 @@ class _Request extends State<Request> {
                       final token = prefs.getString('token') ?? "";
                       print(token);
                       Map data = {
-                        'user_id': rqFriend.id.toString(),
+                        'user_id' : rqFriend.id.toString(),
                         'userId': prefs.getString('userId') ?? "",
-                        "is_accept": "1"
+                        "is_accept" : "1"
                       };
                       print(data);
-                      final response = await http.post(
-                          Uri.parse('${urlApi}/friends/set-accept'),
-                          headers: {
-                            HttpHeaders.authorizationHeader: 'Bearer $token'
-                          },
+                      final response = await http.post(Uri.parse('${urlApi}/friends/set-accept'),
+                          headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
                           body: data);
 
                       print(response.body);
-                      if (response.statusCode == 200) {
+                      if(response.statusCode == 200) {
                         setState(() {
                           acceptButtonText = "Bạn bè";
                           acceptionButtonColor = Colors.green;
@@ -87,26 +85,27 @@ class _Request extends State<Request> {
                       }
                     },
                     child: Container(
-                        alignment: Alignment.center,
+                      alignment: Alignment.center,
                         padding: const EdgeInsets.all(7.0),
                         decoration: BoxDecoration(
                           color: acceptionButtonColor,
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        child: Text(acceptButtonText,
-                            style: const TextStyle(color: Colors.white)),
-                        width: 80,
-                        height: 33),
+                        child: Text(acceptButtonText, style: const TextStyle(color: Colors.white)),
+                      width: 80,
+                      height: 33
+                    ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 15),
                   child: GestureDetector(
-                    onTap: () {
-                      this.setState(() {});
+                    onTap: (){
+                        this.setState(() {
+                        });
                     },
                     child: Container(
-                        alignment: Alignment.center,
+                      alignment: Alignment.center,
                         padding: const EdgeInsets.all(7.0),
                         decoration: BoxDecoration(
                           color: Color(0x00FFA0A2A3),
@@ -114,14 +113,18 @@ class _Request extends State<Request> {
                         ),
                         width: 50,
                         height: 33,
-                        child: Text(deleteButtonText)),
+                        child: Text(deleteButtonText)
+                    ),
                   ),
                 )
               ],
             )
+
           ],
         ),
       ),
     );
   }
+
 }
+

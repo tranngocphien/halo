@@ -3,13 +3,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:halo/components/circle_avatar.dart';
+import 'package:halo/constants.dart';
 import 'package:halo/models/image_model.dart';
 import 'package:halo/models/post.dart';
-import 'package:halo/constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:halo/screens/post/newpost/components/image.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+
 
 class EditPostScreen extends StatefulWidget {
   final PostModel post;
@@ -87,8 +89,7 @@ class _PostDetailScreenState extends State<EditPostScreen> {
               child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    _editPost(
-                        contentController.text, _imageFileList, _videoFile);
+                    _editPost(contentController.text, _imageFileList, _videoFile);
                   },
                   child: Text("Sửa")))
         ],
@@ -232,10 +233,10 @@ class _PostDetailScreenState extends State<EditPostScreen> {
 
     if (imageFileList.isNotEmpty) {
       List<File> listFile =
-          imageFileList.map((image) => File(image.path)).toList();
+      imageFileList.map((image) => File(image.path)).toList();
       imagesByte.addAll(listFile
           .map((e) =>
-              "data:image/jpeg;base64," + base64.encode(e.readAsBytesSync()))
+      "data:image/jpeg;base64," + base64.encode(e.readAsBytesSync()))
           .toList());
     }
 
@@ -264,4 +265,5 @@ class _PostDetailScreenState extends State<EditPostScreen> {
       print("failed");
     }
   }
+
 }

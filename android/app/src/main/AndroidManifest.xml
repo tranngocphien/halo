@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.zalo">
+    package="com.example.halo">
    <application
-        android:label="zalo"
+        android:label="halo"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

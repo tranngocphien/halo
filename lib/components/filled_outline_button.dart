@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants.dart';
+
 class FillOutlineButton extends StatelessWidget {
   const FillOutlineButton({
     Key? key,
@@ -17,7 +19,7 @@ class FillOutlineButton extends StatelessWidget {
     return MaterialButton(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
-        side: const BorderSide(color: Colors.white),
+        side: BorderSide(color: Colors.white),
       ),
       elevation: isFilled ? 2 : 0,
       color: isFilled ? Colors.white : Colors.transparent,

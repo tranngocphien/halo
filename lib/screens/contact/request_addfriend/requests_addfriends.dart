@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:halo/screens/contact/request_addfriend/components/request.dart';
 import 'package:halo/constants.dart';
+import 'package:halo/screens/contact/request_addfriend/components/request.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -16,8 +16,8 @@ class RequestsAddFriendsScreen extends StatefulWidget {
   @override
   State<RequestsAddFriendsScreen> createState() => _RequestAddFriend();
 }
+class _RequestAddFriend extends State<RequestsAddFriendsScreen>{
 
-class _RequestAddFriend extends State<RequestsAddFriendsScreen> {
   late Future<List<RQFriend>> futureRQFriend;
 
   @override
@@ -33,32 +33,33 @@ class _RequestAddFriend extends State<RequestsAddFriendsScreen> {
       appBar: AppBar(
         backgroundColor: primaryColor,
         leading: IconButton(
-          onPressed: () {
+          onPressed: (){
             Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back),
         ),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))],
-        title: const Text("Lời mời kết bạn",
-            style: TextStyle(fontSize: 25, color: Color(0xFFFFFFFF))),
+        actions: [IconButton(onPressed: (){}, icon: const Icon(Icons.search))],
+        title: const Text("Lời mời kết bạn", style: TextStyle(fontSize: 25, color: Color(0xFFFFFFFF))),
       ),
       backgroundColor: backgroundColor,
-      body: Column(children: [
-        FutureBuilder<List<RQFriend>>(
-            future: futureRQFriend,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Expanded(
-                  child: ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        return Request(rqFriend: snapshot.data![index]);
-                      }),
-                );
-              }
-              return Center(child: CircularProgressIndicator());
-            })
-      ]),
+      body: Column(
+        children: [
+          FutureBuilder<List<RQFriend>>(
+              future: futureRQFriend,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Expanded(
+                    child: ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          return Request(rqFriend: snapshot.data![index]);
+                        }),
+                  );
+                }
+                return Center(child: CircularProgressIndicator());
+              })
+        ]
+      ),
     );
   }
 }
@@ -69,12 +70,13 @@ Future<List<RQFriend>> fetchRQFriends() async {
 
   final token = prefs.getString('token') ?? "";
   //print(token);
-  Map data = {'userId': prefs.getString('userId') ?? ""};
+  Map data = {
+    'userId': prefs.getString('userId') ?? ""
+  };
   //print(data);
-  final response = await http.post(
-      Uri.parse('${urlApi}/friends/get-requested-friend'),
-      headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'},
-      body: data);
+  final response = await http.post(Uri.parse('${urlApi}/friends/get-requested-friend'),
+                                    headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'},
+                                    body: data);
   //print(response);
   if (response.statusCode == 200) {
     return parseFriends(response.body);
@@ -85,13 +87,12 @@ Future<List<RQFriend>> fetchRQFriends() async {
 
 List<RQFriend> parseFriends(String responseBody) {
   //print(responseBody);
-  final parsed =
-      json.decode(responseBody)["data"]["friends"].cast<Map<String, dynamic>>();
+  final parsed = json.decode(responseBody)["data"]["friends"].cast<Map<String, dynamic>>();
   //print(parsed);
-  return parsed.map<RQFriend>((json) => RQFriend.fromJson(json)).toList();
+  return parsed.map<RQFriend>((json) =>RQFriend.fromJson(json)).toList();
 }
 
-class RQFriend {
+class RQFriend{
   late String id;
   late String username;
   late String avatar;
@@ -100,7 +101,6 @@ class RQFriend {
   RQFriend(this.id, this.username, this.avatar, this.gender);
   factory RQFriend.fromJson(Map<String, dynamic> json) {
     print("fromMap");
-    return RQFriend(
-        json["_id"], json["username"], json["avatar"]["_id"], json["gender"]);
+    return RQFriend(json["_id"], json["username"], json["avatar"]["_id"], json["gender"]);
   }
 }

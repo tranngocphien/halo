@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:halo/constants.dart';
 import 'package:halo/screens/chats/chat_screen.dart';
 import 'package:halo/screens/contact/contact_screen.dart';
 import 'package:halo/screens/post/newfeed/newfeed_screen.dart';

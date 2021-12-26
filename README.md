@@ -1,4 +1,4 @@
-# zalo
+# halo
 
 A new Flutter project.
 

@@ -1,4 +1,4 @@
-import 'package:halo/models/image_model.dart';
+import 'image_model.dart';
 
 class PostModel {
   final String username;
@@ -28,8 +28,7 @@ class PostModel {
       username: json["author"]["username"],
       content: json["described"] == null ? "" : json["described"],
       id: json["_id"],
-      image: List<ImageModel>.from(
-          json["images"].map((x) => ImageModel.fromJson(x))),
+      image: List<ImageModel>.from(json["images"].map((x) => ImageModel.fromJson(x))),
       // videos: json["videos"],
       like: json["like"],
       createAt: json["createdAt"],

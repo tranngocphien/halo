@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:halo/constants.dart';
+
+import '../constants.dart';
 
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
@@ -18,7 +19,7 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(40)),
       ),
       padding: padding,
@@ -27,7 +28,7 @@ class PrimaryButton extends StatelessWidget {
       onPressed: press,
       child: Text(
         text,
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.white),
       ),
     );
   }

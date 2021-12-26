@@ -3,15 +3,17 @@ import 'package:halo/constants.dart';
 
 class ProfileAvatar extends StatelessWidget {
   final double size;
-  const ProfileAvatar({Key? key, required this.size}) : super(key: key);
+  const ProfileAvatar({Key? key,required this.size}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         CircleAvatar(
-            radius: size,
-            backgroundImage: const NetworkImage("$urlFiles/avatar_2.png")),
+          radius: size,
+          backgroundImage: NetworkImage("${urlFiles}/avatar_2.png")
+        ),
+
         Positioned(
           bottom: 0,
           right: 0,
@@ -19,9 +21,14 @@ class ProfileAvatar extends StatelessWidget {
             height: 15,
             width: 15,
             decoration: BoxDecoration(
-                color: Colors.green,
-                shape: BoxShape.circle,
-                border: Border.all(width: 2, color: whiteColor)),
+              color: Colors.green,
+              shape: BoxShape.circle,
+              border: Border.all(
+                width: 2,
+                color: whiteColor
+              )
+            ),
+
           ),
         )
       ],

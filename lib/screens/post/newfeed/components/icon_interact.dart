@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:halo/constants.dart';
+
+import '../../../../constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,8 +10,7 @@ class IconLike extends StatefulWidget {
   var isClicked;
   String postId;
   IconLike({
-    required this.isClicked,
-    required this.postId,
+    required this.isClicked,required this.postId,
     Key? key,
   }) : super(key: key);
 
@@ -33,17 +33,17 @@ class _IconLikeState extends State<IconLike> {
     return Container(
       padding: EdgeInsets.all(6),
       decoration: BoxDecoration(
-          color: isClicked ? primaryColor : Colors.grey[500],
-          shape: BoxShape.circle),
+          color: isClicked?primaryColor :Colors.grey[500], shape: BoxShape.circle),
       child: GestureDetector(
-        onTap: () {
+        onTap: (){
           likePost(widget.postId).then((value) {
-            if (value.statusCode == 200) {
+            if(value.statusCode == 200){
               setState(() {
                 isClicked = !isClicked;
               });
             }
           });
+
         },
         child: const Icon(
           Icons.thumb_up,
@@ -60,8 +60,8 @@ Future<http.Response> likePost(String postId) async {
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token') ?? "";
   final userId = prefs.getString('userId');
-  Map data = {'userId': userId};
-  return await http.post(Uri.parse(url),
-      body: data,
-      headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
+  Map data = {
+    'userId': userId
+  };
+  return await http.post(Uri.parse(url),body: data, headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
 }

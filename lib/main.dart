@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:halo/constants.dart';
 import 'package:halo/screens/chats/chat_screen.dart';
 import 'package:halo/screens/contact/add_friend/search_friend.dart';
 import 'package:halo/screens/contact/request_addfriend/requests_addfriends.dart';
@@ -9,10 +10,11 @@ import 'package:halo/screens/post/newpost/new_post_screen.dart';
 import 'package:halo/screens/postdetail/post_detail.dart';
 import 'package:halo/screens/register/error_screen.dart';
 import 'package:halo/screens/register/register_screen.dart';
-import 'package:halo/constants.dart';
+import 'package:halo/screens/profile/profile_screen.dart';
+import 'package:halo/screens/profile/profile_setting.dart';
 
-import 'screens/chats/components/components.dart';
 import 'screens/welcome/welcomescreen.dart';
+import 'screens/chats/components/components.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,9 +37,11 @@ class MyApp extends StatelessWidget {
         '/chatspage': (context) => const ChatScreen(),
         '/message': (context) => const MessageScreen(),
         '/newpost': (context) => const NewPost(),
-        '/main': (context) => const MainScreen(),
-        '/requestsAddFriend': (context) => const RequestsAddFriendsScreen(),
-        '/searchFriend': (context) => const SearchFriendScreen(),
+        '/main': (context) => MainScreen(),
+        '/requestsAddFriend': (context) => RequestsAddFriendsScreen(),
+        '/searchFriend': (context) => SearchFriendScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/profile_setting': (context) => const ProfileSetting(),
         '/historyRepair': (context) => const HistoryRepair(),
         '/createGroup': (context) => const CreateGroup(),
       },
