@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:halo/models/chat_model.dart';
 import 'package:halo/models/message_model.dart';
 import 'package:halo/screens/message/message_controller.dart';
+import 'package:halo/utils.dart';
 
 class MessageScreen extends StatelessWidget {
   final ChatModel chatModel;
@@ -14,6 +15,7 @@ class MessageScreen extends StatelessWidget {
     final messageController =
         Get.put(MessageController(chatId: chatModel.id), tag: chatModel.id);
     final contentController = TextEditingController();
+    ScrollController controller = ScrollController();
 
     return Scaffold(
       appBar: buildAppBar(),
@@ -25,6 +27,8 @@ class MessageScreen extends StatelessWidget {
               children: [
                 Expanded(
                     child: ListView(
+                  controller: controller,
+                  reverse: true,
                   children: [
                     ...messageController.chat
                         .map((element) => Message(message: element))
@@ -82,6 +86,7 @@ class MessageScreen extends StatelessWidget {
                                 chatId: chatModel.id,
                                 receivedId: chatModel.userId,
                                 name: '');
+                            contentController.text = '';
                             FocusScope.of(context).requestFocus(FocusNode());
                           },
                           child: const Icon(
@@ -186,7 +191,7 @@ class Message extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      message.updatedAt.toString(),
+                      DateTimeConverter.durationToNow(message.updatedAt),
                       style: const TextStyle(fontSize: 10),
                     )
                   ],

@@ -7,6 +7,7 @@ import 'package:halo/components/circle_avatar.dart';
 import 'package:halo/models/post.dart';
 import 'package:halo/screens/post/edit_post/edit_post_screen.dart';
 import 'package:halo/screens/postdetail/post_detail.dart';
+import 'package:halo/utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -81,7 +82,7 @@ class _PostItemState extends State<PostItem> {
                           ),
                           Row(children: [
                             Text(
-                              widget.post.createAt,
+                              DateTimeConverter.durationToNow(widget.post.createAt),
                               style: TextStyle(
                                   color: Colors.grey[500], fontSize: 12),
                             ),

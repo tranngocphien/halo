@@ -7,7 +7,7 @@ class PostModel {
   final List<ImageModel> image;
   // final List<dynamic> videos;
   final List like;
-  final String createAt;
+  final DateTime createAt;
   final String updateAt;
   final bool isLike;
   final int countComments;
@@ -28,13 +28,13 @@ class PostModel {
 
   factory PostModel.fromMap(Map<String, dynamic> json) => PostModel(
       username: json["author"]["username"],
-      content: json["described"] == null ? "" : json["described"],
+      content: json["described"] ?? "",
       id: json["_id"],
       image: List<ImageModel>.from(
           json["images"].map((x) => ImageModel.fromJson(x))),
       // videos: json["videos"],
       like: json["like"],
-      createAt: json["createdAt"],
+      createAt: DateTime.parse(json['createdAt']),
       updateAt: json["updatedAt"],
       isLike: json["isLike"],
       countComments: json["countComments"],

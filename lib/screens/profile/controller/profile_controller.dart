@@ -59,6 +59,7 @@ class ProfileController extends GetxController {
           posts.value.remove(postModel);
         }
       }
+      posts.reversed;
     } else {
 
     }
