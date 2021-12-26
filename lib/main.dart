@@ -5,16 +5,12 @@ import 'package:halo/screens/contact/add_friend/search_friend.dart';
 import 'package:halo/screens/contact/request_addfriend/requests_addfriends.dart';
 import 'package:halo/screens/login/login_screen.dart';
 import 'package:halo/screens/main/main_screen.dart';
-import 'package:halo/screens/message/message_screen.dart';
 import 'package:halo/screens/post/newpost/new_post_screen.dart';
-import 'package:halo/screens/postdetail/post_detail.dart';
-import 'package:halo/screens/register/error_screen.dart';
 import 'package:halo/screens/register/register_screen.dart';
 import 'package:halo/screens/profile/profile_screen.dart';
 import 'package:halo/screens/profile/profile_setting.dart';
 
 import 'screens/welcome/welcomescreen.dart';
-import 'screens/chats/components/components.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,19 +30,14 @@ class MyApp extends StatelessWidget {
         '/': (context) => const WelcomeScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
-        '/chatspage': (context) => const ChatScreen(),
-        '/message': (context) => const MessageScreen(),
+        '/chatspage': (context) => ChatScreen(),
         '/newpost': (context) => const NewPost(),
         '/main': (context) => MainScreen(),
         '/requestsAddFriend': (context) => RequestsAddFriendsScreen(),
         '/searchFriend': (context) => SearchFriendScreen(),
-        '/profile': (context) => const ProfileScreen(),
-        '/profile_setting': (context) => const ProfileSetting(),
-        '/historyRepair': (context) => const HistoryRepair(),
-        '/createGroup': (context) => const CreateGroup(),
+        '/profile': (context) => ProfileScreen(),
       },
       theme: ThemeData(
-        fontFamily: "OpenSans",
         primaryColor: primaryColor,
       ),
     );

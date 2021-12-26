@@ -60,15 +60,22 @@
 // import 'dart:js';
 
 import 'package:flutter/material.dart';
+import 'package:halo/constants.dart';
+import 'package:halo/screens/post/newfeed/components/post.dart';
+import 'package:halo/screens/profile/controller/profile_controller.dart';
+import 'package:get/get.dart';
+import 'package:halo/screens/profile/profile_setting.dart';
 
 TextEditingController _controller =
     TextEditingController(text: "Nhấn để đổi trạng thái");
 bool _isEnable = false;
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  ProfileScreen({Key? key}) : super(key: key);
   final double coverHeight = 200;
   final double profileHeight = 144;
+
+  final profileController = Get.put(ProfileController());
 
   createAlertDialog(BuildContext context) {
     return showDialog(
@@ -135,12 +142,18 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: ListView(
-            // padding: EdgeInsets.fromLTRB(0, 24, 0, 0),
-            children: <Widget>[
-          buildTop(),
-          buildIntro(),
-        ]));
+        body: profileController.isLoading.value
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Obx(() => ListView(
+                    // padding: EdgeInsets.fromLTRB(0, 24, 0, 0),
+                    children: <Widget>[
+                      buildTop(),
+                      buildIntro(),
+                      ...profileController.posts.value
+                          .map((e) => PostItem(post: e))
+                    ])));
   }
 
   Widget buildTop() {
@@ -163,13 +176,15 @@ class ProfileScreen extends StatelessWidget {
           Container(
             color: Colors.grey,
             child: Image.network(
-              'https://s3.envato.com/files/a4c2e1aa-9c57-4516-8d8b-9ae80aae23a5/inline_image_preview.jpg',
+              '$urlFiles/${profileController.userInfo.value!.coverImage}',
               fit: BoxFit.cover,
             ),
             width: double.infinity,
             height: coverHeight,
           ),
-          Button()
+          Button(
+            username: profileController.userInfo.value!.username,
+          )
         ],
       );
 
@@ -179,7 +194,7 @@ class ProfileScreen extends StatelessWidget {
             radius: profileHeight / 2,
             backgroundColor: Colors.grey.shade800,
             backgroundImage: NetworkImage(
-                'https://upload.wikimedia.org/wikipedia/vi/b/b0/Avatar-Teaser-Poster.jpg'),
+                '$urlFiles/${profileController.userInfo.value!.avatar}'),
           ),
           onTap: () {
             // Navigator.pushNamed(context, '/profile_picture');
@@ -190,7 +205,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget buildIntro() => Column(
         children: [
-          Text("Nguyen Van Avatar",
+          Text(profileController.userInfo.value!.username,
               style: TextStyle(fontSize: 25), textAlign: TextAlign.center),
           Container(
             padding: EdgeInsets.all(5),
@@ -216,8 +231,10 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class Button extends StatelessWidget {
+  final String username;
   const Button({
     Key? key,
+    required this.username,
   }) : super(key: key);
 
   @override
@@ -231,7 +248,12 @@ class Button extends StatelessWidget {
         ),
         color: Colors.white,
         onPressed: () {
-          Navigator.pushNamed(context, '/profile_setting');
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProfileSetting(
+                        username: username,
+                      )));
           // Navigator.pushNamed(context, '/newpost');
           // print("Hello");
         },

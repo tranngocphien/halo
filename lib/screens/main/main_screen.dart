@@ -15,27 +15,16 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int pageIndex = 0;
   List<Widget> pageLists = <Widget>[
-    const ChatScreen(),
-    const ContactScreen(),
-    const NewFeedScreen(),
-    const ProfileScreen()
+    ChatScreen(),
+    ContactScreen(),
+    NewFeedScreen(),
+    ProfileScreen()
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: pageLists
-            .asMap()
-            .map(
-              (i, screen) => MapEntry(
-                i,
-                Offstage(offstage: pageIndex != i, child: screen),
-              ),
-            )
-            .values
-            .toList(),
-      ),
+      body: pageLists[pageIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: pageIndex,
         onTap: (value) {
@@ -45,25 +34,12 @@ class _MainScreenState extends State<MainScreen> {
         },
         type: BottomNavigationBarType.fixed,
         items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.message), label: "Tin nhắn"),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: "Danh bạ"),
           BottomNavigationBarItem(
-            icon: Icon(Icons.message_outlined),
-            activeIcon: Icon(Icons.message),
-            label: 'Tin nhắn',
-          ),
+              icon: Icon(Icons.history_sharp), label: "Nhật ký"),
           BottomNavigationBarItem(
-            icon: Icon(Icons.supervisor_account_outlined),
-            activeIcon: Icon(Icons.supervisor_account),
-            label: 'Danh bạ',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.access_time_outlined),
-            activeIcon: Icon(Icons.access_time),
-            label: 'Nhật ký',
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_outlined),
-              activeIcon: Icon(Icons.person),
-              label: 'Cá nhân'),
+              icon: Icon(Icons.account_circle), label: "Cá nhân")
         ],
       ),
     );

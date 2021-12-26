@@ -73,11 +73,12 @@ class _NewPostState extends State<NewPost> {
         ),
         actions: [
           Container(
-              margin: EdgeInsets.all(8),
+              margin: const EdgeInsets.all(8),
               child: ElevatedButton(
                   onPressed: () {
                     _createPost(
                         _contentController.text, _imageFileList, _videoFile);
+                    Navigator.of(context).popAndPushNamed('/main');
                   },
                   child: Text("Đăng")))
         ],
@@ -165,7 +166,6 @@ class _NewPostState extends State<NewPost> {
       "videos": []
     };
 
-    var body = json.encode(data);
     var dio = Dio(BaseOptions(
       baseUrl: urlApi,
       connectTimeout: 30000,
