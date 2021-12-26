@@ -10,8 +10,8 @@ const kWarninngColor = Color(0xFFF3BB1C);
 const kErrorColor = Color(0xFFF03738);
 
 const kDefaultPadding = 20.0;
-const urlApi = "http://127.0.0.1:8000/api/v1";
-const urlFiles = "http://127.0.0.1:8000/files";
+const urlApi = "http://192.168.1.5:8000/api/v1";
+const urlFiles = "http://192.168.1.5:8000/files";
 
 // ----- Lam ----
 const textColor = Color(0xFF242424);
