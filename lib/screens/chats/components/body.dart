@@ -16,7 +16,7 @@ class Body extends StatelessWidget {
           child: Row(
             children: [
               FillOutlineButton(press: () {}, text: "Recent Message"),
-              SizedBox(width: kDefaultPadding),
+              const SizedBox(width: kDefaultPadding),
               FillOutlineButton(text: "Active", press: (){}, isFilled: false,)
             ],
           ),

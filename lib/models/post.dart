@@ -11,6 +11,7 @@ class PostModel {
   final String updateAt;
   final bool isLike;
   final int countComments;
+  final String userId;
 
   PostModel(
       {required this.username,
@@ -22,17 +23,20 @@ class PostModel {
       required this.createAt,
       required this.updateAt,
       required this.isLike,
-      required this.countComments});
+      required this.countComments,
+      required this.userId});
 
   factory PostModel.fromMap(Map<String, dynamic> json) => PostModel(
       username: json["author"]["username"],
       content: json["described"] == null ? "" : json["described"],
       id: json["_id"],
-      image: List<ImageModel>.from(json["images"].map((x) => ImageModel.fromJson(x))),
+      image: List<ImageModel>.from(
+          json["images"].map((x) => ImageModel.fromJson(x))),
       // videos: json["videos"],
       like: json["like"],
       createAt: json["createdAt"],
       updateAt: json["updatedAt"],
       isLike: json["isLike"],
-      countComments: json["countComments"]);
+      countComments: json["countComments"],
+      userId: json['author']['_id']);
 }

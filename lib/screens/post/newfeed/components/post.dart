@@ -27,12 +27,16 @@ class PostItem extends StatefulWidget {
 class _PostItemState extends State<PostItem> {
   var isDeleted = false;
   var countLike;
+  var isLiked = false;
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     countLike = widget.post.like.length;
+    isLiked = widget.post.isLike;
+
   }
 
   @override
@@ -71,7 +75,7 @@ class _PostItemState extends State<PostItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "${widget.post.username}",
+                            widget.post.username,
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w800),
                           ),
@@ -94,8 +98,16 @@ class _PostItemState extends State<PostItem> {
                       ),
                     ),
                     IconButton(
-                        onPressed: () {
-                          buildShowModalBottomSheet(context);
+                        onPressed: () async {
+                          final prefs = await SharedPreferences.getInstance();
+                          final userId = prefs.getString('userId');
+                          if(userId == widget.post.userId){
+                            buildShowOwnModalBottomSheet(context);
+                          }
+                          else {
+                            buildShowFriendModalBottomSheet(context);
+                          }
+
                         },
                         icon: const Icon(Icons.more_horiz))
                   ],
@@ -116,20 +128,42 @@ class _PostItemState extends State<PostItem> {
                 const SizedBox(
                   height: 8,
                 ),
-                widget.post.image.isNotEmpty?
-                GridView.count(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  crossAxisCount: 2,
-                  children: widget.post.image
-                      .map((e) => Image.network("${urlFiles}/${e.name}"))
-                      .toList(),
-                ): Container(),
+                widget.post.image.isNotEmpty
+                    ? GridView.count(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        crossAxisCount: 2,
+                        children: widget.post.image
+                            .map((e) => Image.network("${urlFiles}/${e.name}"))
+                            .toList(),
+                      )
+                    : Container(),
                 Row(
                   children: [
-                    IconLike(
-                      isClicked: widget.post.isLike,
-                      postId: widget.post.id,
+                    Container(
+                      padding: EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                          color: isLiked ?primaryColor :Colors.grey[500], shape: BoxShape.circle),
+                      child: GestureDetector(
+                        onTap: (){
+                          likePost(widget.post.id).then((value) {
+                            if(value.statusCode == 200){
+                              setState(() {
+                                isLiked = !isLiked;
+                                if(isLiked == true){
+                                  countLike = countLike + 1;
+                                }
+                              });
+                            }
+                          });
+
+                        },
+                        child: const Icon(
+                          Icons.thumb_up,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ),
                     ),
                     const SizedBox(
                       width: 10,
@@ -151,7 +185,7 @@ class _PostItemState extends State<PostItem> {
                         size: 16,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     Text(
@@ -168,7 +202,7 @@ class _PostItemState extends State<PostItem> {
     }
   }
 
-  Future<dynamic> buildShowModalBottomSheet(BuildContext context) {
+  Future<dynamic> buildShowOwnModalBottomSheet(BuildContext context) {
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext bc) {
@@ -181,25 +215,6 @@ class _PostItemState extends State<PostItem> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    const Icon(Icons.report_problem),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    TextButton(
-                        onPressed: () {
-
-                        },
-                        child: const Text(
-                          "Báo cáo bài viết",
-                          style: TextStyle(fontSize: 20, color: Colors.black),
-                        )),
-                  ],
-                ),
-                const Divider(
-                  thickness: 2,
-                ),
                 Row(
                   children: [
                     const Icon(Icons.delete),
@@ -242,7 +257,8 @@ class _PostItemState extends State<PostItem> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => EditPostScreen(post: widget.post)),
+                                builder: (context) =>
+                                    EditPostScreen(post: widget.post)),
                           );
                         },
                         child: const Text(
@@ -264,6 +280,74 @@ class _PostItemState extends State<PostItem> {
     );
   }
 
+  Future<dynamic> buildShowFriendModalBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return Container(
+            padding: EdgeInsets.all(8),
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20))),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.report_problem),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "Báo cáo bài viết",
+                          style: TextStyle(fontSize: 20, color: Colors.black),
+                        )),
+                  ],
+                ),
+                const Divider(
+                  thickness: 2,
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.delete),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          deletePost(widget.post.id, context).then((value) {
+                            Navigator.pop(context);
+                            if (value.statusCode == 200) {
+                              setState(() {
+                                isDeleted = true;
+                              });
+                              showSnackBar("Xóa thành công");
+                            } else {
+                              var jsonResponse = json.decode(value.body);
+                              showSnackBar(jsonResponse["message"]);
+                            }
+                          });
+                        },
+                        child: const Text(
+                          "Chặn người dùng",
+                          style: TextStyle(fontSize: 20, color: Colors.black),
+                        )),
+                  ],
+                ),
+              ],
+            ));
+      },
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+      backgroundColor: whiteColor.withOpacity(1.0),
+    );
+  }
+
+
   void showSnackBar(String content) {
     final snackbar = SnackBar(content: Text(content));
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
@@ -283,5 +367,16 @@ class _PostItemState extends State<PostItem> {
     final token = prefs.getString('token') ?? "";
     return await http.post(Uri.parse(url),
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
+  }
+
+  Future<http.Response> likePost(String postId) async {
+    var url = "${urlApi}/postLike/action/${postId}";
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? "";
+    final userId = prefs.getString('userId');
+    Map data = {
+      'userId': userId
+    };
+    return await http.post(Uri.parse(url),body: data, headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
   }
 }
