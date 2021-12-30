@@ -1,10 +1,11 @@
 class UserInfo {
-  final String username;
-  final String phonenumber;
-  final String gender;
-  final String avatar;
-  final String coverImage;
-  final String id;
+  static late String userId;
+  late String username;
+  late String phonenumber;
+  late String gender;
+  late String avatar;
+  late String coverImage;
+  late String id;
 
   UserInfo({
     required this.username,
@@ -21,7 +22,16 @@ class UserInfo {
         phonenumber: json['phonenumber'],
         gender: json['gender'],
         avatar: json['avatar']['fileName'] ?? '',
-        coverImage:json['cover_image'] == null? '': json['cover_image']['fileName'],
+        coverImage:
+            json['cover_image'] == null ? '' : json['cover_image']['fileName'],
         id: json['_id']);
   }
+
+  factory UserInfo.fromEmpty() => UserInfo(
+      username: "",
+      phonenumber: "",
+      gender: "",
+      avatar: "",
+      coverImage: "",
+      id: "");
 }

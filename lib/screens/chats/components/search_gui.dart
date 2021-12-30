@@ -5,11 +5,12 @@ import 'package:halo/data/data.dart';
 import 'package:halo/icons/icons.dart';
 import 'package:halo/models/models.dart';
 import 'package:halo/screens/chats/components/components.dart';
+import 'package:halo/screens/message/message_screen.dart';
 
 class SearchGUI extends StatefulWidget {
-  late String searchValue;
+  final TextEditingController textController;
 
-  SearchGUI(this.searchValue, {Key? key}) : super(key: key);
+  SearchGUI({required this.textController, Key? key}) : super(key: key);
 
   @override
   State<SearchGUI> createState() => _SearchGUIState();
@@ -122,14 +123,21 @@ class _SearchGUIState extends State<SearchGUI> {
         : Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: ListView.builder(
+              primary: false,
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: friendList.length,
               itemBuilder: (context, index) {
-                User friend = friendList[index];
+                UserInfo friend = friendList[index];
                 return GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/message');
+                  onTap: () async {
+                    Chat chat = await fetchChat(friend.id);
+                    updateSearchHistory(chat);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                MessageScreen(chat: chat, loc: -1)));
                   },
                   child: Container(
                     width: double.infinity,
@@ -197,6 +205,7 @@ class _SearchGUIState extends State<SearchGUI> {
         : Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: ListView.builder(
+              primary: false,
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: groupList.length,
@@ -204,7 +213,15 @@ class _SearchGUIState extends State<SearchGUI> {
                 Chat groupChat = groupList[index];
                 return GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, '/message');
+                    Chat officialChat = SearchData.cached_chat
+                        .where((chat) => chat.id == groupChat.id)
+                        .toList()[0];
+                    updateSearchHistory(officialChat);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                MessageScreen(chat: officialChat, loc: -1)));
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 10),
@@ -277,6 +294,7 @@ class _SearchGUIState extends State<SearchGUI> {
         : Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: ListView.builder(
+              primary: false,
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: messageList.length,
@@ -285,6 +303,7 @@ class _SearchGUIState extends State<SearchGUI> {
                 List<int> indexList = messageList[index]["index"];
                 return GestureDetector(
                   onTap: () {
+                    updateSearchHistory(chat);
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -302,7 +321,7 @@ class _SearchGUIState extends State<SearchGUI> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
                             child: Image.network(
-                              '$urlFiles/${chat.partner is User ? chat.partner.avatar : chat.partner[0].avatar}',
+                              '$urlFiles/${chat.partner is UserInfo ? chat.partner.avatar : chat.partner[0].avatar}',
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -372,43 +391,45 @@ class _SearchGUIState extends State<SearchGUI> {
       );
     }
 
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          friendList.isEmpty && groupChatList.isEmpty
-              ? Container(height: 0)
-              : Container(
-                  margin: const EdgeInsets.only(top: 10, left: 10),
-                  child: Text(
-                    "Liên hệ (${friendList.length + groupChatList.length})",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: mediumSize,
+    return Scrollbar(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            friendList.isEmpty && groupChatList.isEmpty
+                ? Container(height: 0)
+                : Container(
+                    margin: const EdgeInsets.only(top: 10, left: 10),
+                    child: Text(
+                      "Liên hệ (${friendList.length + groupChatList.length})",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: mediumSize,
+                      ),
                     ),
                   ),
-                ),
-          buildFriendListTile(friendList),
-          buildGroupListTile(groupChatList),
-          ((friendList.isNotEmpty || groupChatList.isNotEmpty) &&
-                  messageList.isNotEmpty)
-              ? const Divider(thickness: 10)
-              : const SizedBox(height: 0),
-          messageList.isEmpty
-              ? Container(height: 0)
-              : Container(
-                  margin: const EdgeInsets.only(top: 10, left: 10),
-                  child: Text(
-                    "Tin nhắn (${messageList.length})",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: mediumSize,
+            buildFriendListTile(friendList),
+            buildGroupListTile(groupChatList),
+            ((friendList.isNotEmpty || groupChatList.isNotEmpty) &&
+                    messageList.isNotEmpty)
+                ? const Divider(thickness: 10)
+                : const SizedBox(height: 0),
+            messageList.isEmpty
+                ? Container(height: 0)
+                : Container(
+                    margin: const EdgeInsets.only(top: 10, left: 10),
+                    child: Text(
+                      "Tin nhắn (${messageList.length})",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: mediumSize,
+                      ),
                     ),
                   ),
-                ),
-          buildMessageListTile(messageList)
-        ],
+            buildMessageListTile(messageList)
+          ],
+        ),
       ),
     );
   }
@@ -420,11 +441,12 @@ class _SearchGUIState extends State<SearchGUI> {
             SearchData.groupChatList.isNotEmpty &&
             SearchData.cached_chat.isNotEmpty
         ? buildListTile(
-            parseFriends(SearchData.friendList, widget.searchValue),
-            parseGroupChats(SearchData.groupChatList, widget.searchValue),
-            parseMessage(SearchData.cached_chat, widget.searchValue))
+            parseFriends(SearchData.friendList, widget.textController.text),
+            parseGroupChats(
+                SearchData.groupChatList, widget.textController.text),
+            parseMessage(SearchData.cached_chat, widget.textController.text))
         : FutureBuilder<List<dynamic>>(
-            future: fetchSearchData(widget.searchValue),
+            future: fetchSearchData(widget.textController.text),
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
@@ -435,7 +457,7 @@ class _SearchGUIState extends State<SearchGUI> {
                       color: Colors.black,
                       alignment: Alignment.center,
                       child: const Text(
-                        'Something went wrong!',
+                        '{Something went wrong}!',
                         style: TextStyle(fontSize: 28, color: Colors.white),
                       ),
                     );
@@ -446,5 +468,41 @@ class _SearchGUIState extends State<SearchGUI> {
               }
             },
           );
+  }
+
+  void updateSearchHistory(Chat chat) {
+    var i = 0;
+    for (; i < SearchData.searched_chat.length; i++) {
+      Chat tmp = SearchData.searched_chat[i];
+      if (tmp.id == chat.id) {
+        SearchData.searched_chat.removeAt(i);
+        SearchData.searched_chat.insert(0, chat);
+        break;
+      }
+    }
+
+    var j = 0;
+    for (; j < SearchData.searched_word.length; j++) {
+      String tmp = SearchData.searched_word[j];
+      if (tmp == widget.textController.text) {
+        SearchData.searched_word.removeAt(j);
+        SearchData.searched_word.insert(0, tmp);
+        break;
+      }
+    }
+
+    if (i == SearchData.searched_chat.length) {
+      if (SearchData.searched_chat.length >= 10) {
+        SearchData.searched_chat.removeLast();
+      }
+      SearchData.searched_chat.insert(0, chat);
+    }
+
+    if (j == SearchData.searched_word.length) {
+      if (SearchData.searched_word.length >= 5) {
+        SearchData.searched_word.removeLast();
+      }
+      SearchData.searched_word.insert(0, widget.textController.text);
+    }
   }
 }

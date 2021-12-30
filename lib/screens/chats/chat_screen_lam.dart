@@ -1,15 +1,10 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:halo/api/chat_api.dart';
-import 'package:halo/data/data.dart';
 import 'package:halo/models/chat.dart';
 import 'package:halo/constants.dart';
 import 'package:halo/icons/icons.dart';
-import 'package:halo/models/user_info.dart';
 import 'package:halo/screens/chats/components/components.dart';
 import 'package:http/http.dart' as http;
 
@@ -101,86 +96,7 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             buildListView(),
             isSearchedStart
-                ? Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                    ),
-                    child: SearchData.searched_chat.isEmpty &&
-                            SearchData.searched_word.isEmpty
-                        ? Container(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: const Center(
-                              child: Text("Danh sách tìm kiếm gần đây trống"),
-                            ),
-                          )
-                        : Column(children: [
-                            Container(
-                              height: 50,
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    "Tìm kiếm gần đây",
-                                    style: TextStyle(
-                                      fontSize: smallSize,
-                                      color: textBoldColor,
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                          context, '/historyRepair');
-                                      setState(() {});
-                                    },
-                                    child: const Text(
-                                      "Sửa",
-                                      style: TextStyle(
-                                        fontSize: smallSize,
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: ListView.builder(
-                                itemBuilder: (ctx, index) {
-                                  if (index == 0) {
-                                    return buildUserSearchSlider();
-                                  } else if (index == 1) {
-                                    return const Divider();
-                                  }
-                                  return SizedBox(
-                                    height: 40,
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.only(
-                                              left: 20, right: 10),
-                                          child: const Icon(Search.search,
-                                              size: smallSize),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Text(
-                                          SearchData.searched_word[index - 2],
-                                          style: const TextStyle(
-                                              fontSize: smallSize),
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                },
-                                itemCount: SearchData.searched_word.length + 2,
-                              ),
-                            ),
-                          ]),
-                  )
+                ? History(textController: _textController)
                 : const Text(""),
             isSearchedScroll
                 ? GestureDetector(
@@ -198,7 +114,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   )
                 : const Text(""),
             _textController.text.isNotEmpty
-                ? SearchGUI(_textController.text)
+                ? SearchGUI(textController: _textController)
                 : Container(),
           ],
         ));
@@ -216,7 +132,9 @@ class _ChatScreenState extends State<ChatScreen> {
     if (leadingIcon.icon == Search.search) {
       leadingIcon = activeLeading;
       searchBar = activeSearchBar as Widget;
-      isSearchedStart = true;
+      if (!isSearchedScroll) {
+        isSearchedStart = true;
+      }
     } else {
       leadingIcon = const Icon(Search.search, size: 22, color: Colors.white);
       searchBar = const Text('Tìm bạn bè, tin nhắn...',
@@ -232,7 +150,7 @@ class _ChatScreenState extends State<ChatScreen> {
           future: fetchChats(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              SearchData.cached_chat = chats = snapshot.data!;
+              chats = snapshot.data!;
               return ListView.builder(
                 itemBuilder: (ctx, index) {
                   return index == (snapshot.data!.length)
@@ -386,31 +304,27 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget item(int index) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, '/message');
-      },
-      child: Slidable(
-          actionPane: const SlidableDrawerActionPane(),
-          actionExtentRatio: 0.2,
-          secondaryActions: [
-            IconSlideAction(
-                caption: 'Thêm',
-                color: const Color(0xff8f9aa6),
-                icon: Icons.more_horiz,
-                onTap: () => onDismissed(index, "add")),
-            IconSlideAction(
-                caption: chats[index].isPined ? 'Bỏ Ghim' : 'Ghim',
-                color: const Color(0xff4751bb),
-                icon: chats[index].isPined ? Unpin.unpin : Pin.pin,
-                onTap: () => onDismissed(index, "pin")),
-            IconSlideAction(
-                caption: 'Xoá',
-                color: const Color(0xffee4e49),
-                icon: Icons.delete,
-                onTap: () => onDismissed(index, "delete"))
-          ],
-          child: ListTileCard(chat: chats[index])),
+    return Slidable(
+      actionPane: const SlidableDrawerActionPane(),
+      actionExtentRatio: 0.2,
+      secondaryActions: [
+        IconSlideAction(
+            caption: 'Thêm',
+            color: const Color(0xff8f9aa6),
+            icon: Icons.more_horiz,
+            onTap: () => onDismissed(index, "add")),
+        IconSlideAction(
+            caption: chats[index].isPined ? 'Bỏ Ghim' : 'Ghim',
+            color: const Color(0xff4751bb),
+            icon: chats[index].isPined ? Unpin.unpin : Pin.pin,
+            onTap: () => onDismissed(index, "pin")),
+        IconSlideAction(
+            caption: 'Xoá',
+            color: const Color(0xffee4e49),
+            icon: Icons.delete,
+            onTap: () => onDismissed(index, "delete"))
+      ],
+      child: ListTileCard(chat: chats[index]),
     );
   }
 
@@ -615,48 +529,6 @@ class _ChatScreenState extends State<ChatScreen> {
                       icon: const Icon(Icons.cancel, color: Colors.black),
                     )
                   : null),
-        ),
-      );
-
-  Widget buildUserSearchSlider() => SizedBox(
-        height: 110,
-        width: double.infinity,
-        child: ListView.builder(
-          itemBuilder: (ctx, index) {
-            return GestureDetector(
-              onTap: () {
-                print('Vào nhắn với ${chats[index].chatName} nè');
-                Navigator.pushNamed(context, '/message');
-              },
-              child: Container(
-                width: 65,
-                margin: const EdgeInsets.all(6),
-                child: Column(children: [
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundColor: Colors.transparent,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(30),
-                      child: Image.network(
-                        "$urlFiles/${chats[index].partner is UserInfo ? chats[index].partner.avatar : chats[index].partner[0].avatar}",
-                        fit: BoxFit.cover,
-                        width: 60.0,
-                        height: 60.0,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(chats[index].chatName,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: subtitleColor)),
-                ]),
-              ),
-            );
-          },
-          scrollDirection: Axis.horizontal,
-          itemCount: SearchData.searched_chat.length,
         ),
       );
 }

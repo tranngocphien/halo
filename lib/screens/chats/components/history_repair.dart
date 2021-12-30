@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
 import 'package:halo/data/data.dart';
 import 'package:halo/icons/icons.dart';
+import 'package:halo/models/models.dart';
+import 'package:halo/models/user_info.dart';
 
 class HistoryRepair extends StatefulWidget {
   const HistoryRepair({Key? key}) : super(key: key);
@@ -90,20 +92,20 @@ class _HistoryRepairState extends State<HistoryRepair> {
             shrinkWrap: true,
             padding: EdgeInsets.zero,
             itemBuilder: (ctx, index) {
+              Chat chat = SearchData.searched_chat[index];
               return Container(
                 width: double.infinity,
                 child: Row(children: [
                   SizedBox(
                     width: 50,
-                    child: SearchData.searched_chat[index]['chatType'] ==
-                            'PRIVATE_CHAT'
+                    child: chat.partner is UserInfo
                         ? CircleAvatar(
                             radius: 10,
                             backgroundColor: Colors.transparent,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Image.network(
-                                '$urlFiles/${SearchData.searched_chat[index]['avatar']}',
+                                '$urlFiles/${chat.partner.avartar}',
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -118,8 +120,7 @@ class _HistoryRepairState extends State<HistoryRepair> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            SearchData.searched_chat[index]['chatName']
-                                as String,
+                            chat.chatName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
