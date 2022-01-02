@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
 import 'package:halo/models/models.dart';
 import 'package:halo/screens/chats/components/utils.dart';
+import 'package:halo/screens/message/message_screen.dart';
 
 class MessageMatch extends StatelessWidget {
   final Chat chat;
@@ -29,10 +30,16 @@ class MessageMatch extends StatelessWidget {
         padding: EdgeInsets.zero,
         itemCount: indexList.length,
         itemBuilder: (context, index) {
-          Message message = chat.message[indexList[index]];
+          MessageModel message = chat.message[indexList[index]];
           return GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/message');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      MessageScreen(chat: chat, loc: indexList[index]),
+                ),
+              );
             },
             child: SizedBox(
               height: 60,

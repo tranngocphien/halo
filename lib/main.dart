@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
-import 'package:halo/screens/chats/chat_screen.dart';
+import 'package:halo/screens/chats/chat_screen_lam.dart';
 import 'package:halo/screens/contact/add_friend/search_friend.dart';
 import 'package:halo/screens/contact/request_addfriend/requests_addfriends.dart';
 import 'package:halo/screens/login/login_screen.dart';
@@ -10,6 +10,7 @@ import 'package:halo/screens/register/register_screen.dart';
 import 'package:halo/screens/profile/profile_screen.dart';
 import 'package:halo/screens/profile/profile_setting.dart';
 
+import 'screens/chats/components/components.dart';
 import 'screens/welcome/welcomescreen.dart';
 
 void main() {
@@ -36,6 +37,8 @@ class MyApp extends StatelessWidget {
         '/requestsAddFriend': (context) => RequestsAddFriendsScreen(),
         '/searchFriend': (context) => SearchFriendScreen(),
         '/profile': (context) => ProfileScreen(),
+        '/historyRepair': (context) => const HistoryRepair(),
+        '/createGroup': (context) => const CreateGroup(),
       },
       theme: ThemeData(
         primaryColor: primaryColor,

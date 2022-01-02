@@ -1,11 +1,12 @@
-import 'message.dart';
-import 'user_screen.dart';
+import 'package:halo/models/user_info.dart';
+
+import 'message_model.dart';
 
 class Chat {
   late String id;
   late String chatName;
   late dynamic partner;
-  late List<Message> message;
+  late List<MessageModel> message;
   late bool isMuted;
   late DateTime mutedTo;
   late bool isPined;
@@ -23,9 +24,14 @@ class Chat {
     dynamic partner = [];
 
     for (var i = 0; i < member.length; i++) {
-      if (member[i] != User.userId) {
-        partner.add(User(member[i]['_id'], member[i]['username'], "",
-            member[i]['avatar']["fileName"], ""));
+      if (member[i] != UserInfo.userId) {
+        partner.add(UserInfo(
+            id: member[i]['_id'],
+            username: member[i]['username'],
+            phonenumber: "",
+            gender: "",
+            avatar: member[i]['avatar']["fileName"],
+            coverImage: ""));
       }
     }
 
@@ -33,7 +39,7 @@ class Chat {
       id: chat['_id'],
       chatName: chat['name'],
       partner: partner,
-      message: [Message.fromContent("Thành viên: $username")],
+      message: [MessageModel.fromContent("Thành viên: $username")],
       isMuted: false,
       isPined: false,
     );
@@ -51,7 +57,7 @@ class Chat {
         .map((user) => {user['avatar']['_id']: user['avatar']['fileName']});
     mapAvatar = mapAvatar.reduce((map1, map2) => map1..addAll(map2));
 
-    List<Message> message = [];
+    List<MessageModel> message = [];
 
     for (var i = 0; i < messages.length; i++) {
       final tmp = messages[i];
@@ -59,10 +65,15 @@ class Chat {
           DateTime.parse(tmp["createdAt"]).add(const Duration(hours: 7));
       DateTime updatedAt =
           DateTime.parse(tmp["createdAt"]).add(const Duration(hours: 7));
-      message.add(Message(
+      message.add(MessageModel(
         id: tmp["_id"],
-        sender: User(tmp["user"]["_id"], tmp["user"]["username"], "",
-            mapAvatar[tmp["user"]["avatar"]], ""),
+        sender: UserInfo(
+            id: tmp["user"]["_id"],
+            username: tmp["user"]["username"],
+            phonenumber: "",
+            gender: "",
+            avatar: mapAvatar[tmp["user"]["avatar"]],
+            coverImage: ""),
         content: tmp["content"],
         createdAt: DateTime(
           createdAt.year,
@@ -87,16 +98,26 @@ class Chat {
     }
 
     if (chat['type'] == "PRIVATE_CHAT") {
-      final other = User.userId == member[0]['_id'] ? member[1] : member[0];
+      final other = UserInfo.userId == member[0]['_id'] ? member[1] : member[0];
       chatName = other['username'];
-      partner = User(
-          other["_id"], other['username'], "", other['avatar']["fileName"], "");
+      partner = UserInfo(
+          id: other["_id"],
+          username: other['username'],
+          phonenumber: "",
+          gender: "",
+          avatar: other['avatar']["fileName"],
+          coverImage: "");
     } else {
       chatName = chat["name"];
       partner = member.map((user) {
-        if (user["_id"] != User.userId) {
-          return User(user["_id"], user["username"], "",
-              user['avatar']["fileName"], "");
+        if (user["_id"] != UserInfo.userId) {
+          return UserInfo(
+              id: user["_id"],
+              username: user["username"],
+              phonenumber: "",
+              gender: "",
+              avatar: user['avatar']["fileName"],
+              coverImage: "");
         }
         return null;
       }).toList();
@@ -111,5 +132,23 @@ class Chat {
       isMuted: false,
       isPined: false,
     );
+  }
+
+  List<String> getMember() {
+    List<String> member = [];
+
+    member.add(UserInfo.userId);
+    if (partner is UserInfo) {
+      member.add(partner.id);
+    } else {
+      member.addAll(partner
+          .map((user) {
+            return user.id;
+          })
+          .toList()
+          .cast<String>());
+    }
+
+    return member;
   }
 }
