@@ -3,6 +3,7 @@ import 'package:halo/constants.dart';
 import 'package:halo/models/models.dart';
 import 'package:halo/icons/icons.dart';
 import 'package:halo/screens/chats/components/utils.dart';
+import 'package:halo/screens/message/message_screen.dart';
 
 class ListTileCard extends StatefulWidget {
   final Chat chat;
@@ -15,24 +16,13 @@ class ListTileCard extends StatefulWidget {
 
 class _ListTileCardState extends State<ListTileCard> {
   late Chat chat;
-  late Message lastMessage;
+  late MessageModel lastMessage;
   late String content = "";
   @override
   void initState() {
     super.initState();
     chat = widget.chat;
-    lastMessage = chat.message[chat.message.length - 1];
-    if (chat.partner is User) {
-      content = lastMessage.sender.id == User.userId
-          ? "You: ${lastMessage.content}"
-          : lastMessage.content;
-    } else {
-      if (lastMessage.sender.id == User.userId) {
-        content = "You: ${lastMessage.content}";
-      } else {
-        content = "${lastMessage.sender.username}: ${lastMessage.content}";
-      }
-    }
+    changeLastMessage();
   }
 
   @override
@@ -42,7 +32,13 @@ class _ListTileCardState extends State<ListTileCard> {
           setState(() {
             lastMessage.unread = false;
           });
-          Navigator.pushNamed(context, '/message');
+          Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MessageScreen(chat: chat, loc: -1)))
+              .then((_) => setState(() {
+                    changeLastMessage();
+                  }));
         },
         child: SizedBox(
           height: 80,
@@ -55,7 +51,7 @@ class _ListTileCardState extends State<ListTileCard> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(30),
                   child: Image.network(
-                    '$urlFiles/${chat.partner is User ? chat.partner.avatar : chat.partner[0].avatar}',
+                    '$urlFiles/${chat.partner is UserInfo ? chat.partner.avatar : chat.partner[0].avatar}',
                     fit: BoxFit.cover,
                     width: 70.0,
                     height: 70.0,
@@ -155,7 +151,8 @@ class _ListTileCardState extends State<ListTileCard> {
                                           : const Text(""),
                                     ]),
                               ),
-                              lastMessage.unread == true
+                              lastMessage.unread == true &&
+                                      lastMessage.sender.id != UserInfo.userId
                                   ? const CircleAvatar(
                                       radius: 6,
                                       backgroundColor: Colors.blue,
@@ -184,5 +181,20 @@ class _ListTileCardState extends State<ListTileCard> {
       color: lastMessage.unread ? textColor : subtitleColor,
       fontWeight: FontWeight.w500,
     );
+  }
+
+  void changeLastMessage() {
+    lastMessage = chat.message[chat.message.length - 1];
+    if (chat.partner is UserInfo) {
+      content = lastMessage.sender.id == UserInfo.userId
+          ? "You: ${lastMessage.content}"
+          : lastMessage.content;
+    } else {
+      if (lastMessage.sender.id == UserInfo.userId) {
+        content = "You: ${lastMessage.content}";
+      } else {
+        content = "${lastMessage.sender.username}: ${lastMessage.content}";
+      }
+    }
   }
 }

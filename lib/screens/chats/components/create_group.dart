@@ -5,7 +5,8 @@ import 'package:halo/api/search_api.dart';
 import 'package:halo/constants.dart';
 import 'package:halo/data/search_data.dart';
 import 'package:halo/icons/icons.dart';
-import 'package:halo/models/user_screen.dart';
+import 'package:halo/models/models.dart';
+import 'package:halo/screens/message/message_screen.dart';
 
 class CreateGroup extends StatefulWidget {
   const CreateGroup({Key? key}) : super(key: key);
@@ -77,14 +78,19 @@ class _CreateGroupState extends State<CreateGroup> {
                         textColor: Colors.white,
                         fontSize: 15.0);
                   } else {
-                    friendIndex.add(User.userId);
-                    final respond = await createGroupChat({
+                    friendIndex.add(UserInfo.userId);
+                    Chat respond = await createGroupChat({
                       "name": _groupNameController.text,
                       "member": friendIndex
                     });
-
-                    Navigator.pushNamed(context, '/message');
-                    // Navigator.pop(context);
+                    friendIndex.clear();
+                    Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    MessageScreen(chat: respond, loc: -1)))
+                        .then((value) => Navigator.pop(context));
+                    setState(() {});
                   }
                 }
               },

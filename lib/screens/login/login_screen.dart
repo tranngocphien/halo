@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
-import 'package:halo/models/user_screen.dart';
+import 'package:halo/models/user_info.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -186,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('token', jsonResponse['token']);
         prefs.setString('userId', jsonResponse['data']['id']);
-        User.userId = jsonResponse['data']['id'];
+        UserInfo.userId = jsonResponse['data']['id'];
 
         Navigator.pushNamed(context, "/main");
       }

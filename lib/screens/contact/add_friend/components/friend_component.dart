@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:io';
 
-
 class FriendComponent extends StatefulWidget {
   final UFriend friend;
 
@@ -20,14 +19,13 @@ class FriendComponent extends StatefulWidget {
 }
 
 class _Friend extends State<FriendComponent> {
-  
   UFriend friend;
-  
+
   _Friend(this.friend);
 
   String textButton = "Kết bạn";
   Color colorButton = Color(0xFF035DFD);
-  
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -39,7 +37,7 @@ class _Friend extends State<FriendComponent> {
           children: [
             Container(
               child: GestureDetector(
-                onTap: (){
+                onTap: () {
                   Navigator.pushNamed(context, "/message");
                 },
                 child: Row(
@@ -47,19 +45,18 @@ class _Friend extends State<FriendComponent> {
                   children: [
                     CircleAvatar(
                       radius: 25,
-                      backgroundImage: AssetImage("assets/images/profile_avatar.jpg"),
+                      backgroundImage:
+                          AssetImage("assets/images/profile_avatar.jpg"),
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 10.0),
-                      child: Text(friend.username, style: TextStyle(fontSize: 23)),
+                      child:
+                          Text(friend.username, style: TextStyle(fontSize: 23)),
                     ),
                   ],
                 ),
               ),
-
-
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -84,14 +81,16 @@ class _Friend extends State<FriendComponent> {
                         String userId = prefs.getString('userId') ?? "";
 
                         //print(token);
-                        Map data = {
-                          "user_id" : friend.id,
-                          "userId" : userId
-                        };
+                        Map data = {"user_id": friend.id, "userId": userId};
 
                         print(data);
 
-                        final response = await http.post(Uri.parse('${urlApi}/friends/set-request-friend'), headers: {HttpHeaders.authorizationHeader: 'Bearer $token'}, body: data);
+                        final response = await http.post(
+                            Uri.parse('${urlApi}/friends/set-request-friend'),
+                            headers: {
+                              HttpHeaders.authorizationHeader: 'Bearer $token'
+                            },
+                            body: data);
                         int code = response.statusCode;
 
                         print(response.body);
@@ -104,11 +103,9 @@ class _Friend extends State<FriendComponent> {
                         }
                       },
                       child: Text(textButton),
-                    )
-                )
+                    ))
               ],
             )
-
           ],
         ),
       ),
