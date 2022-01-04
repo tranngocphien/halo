@@ -209,12 +209,7 @@ class ProfileScreen extends StatelessWidget {
               style: TextStyle(fontSize: 25), textAlign: TextAlign.center),
           Container(
             padding: EdgeInsets.all(5),
-            child: TextField(
-              controller: _controller,
-              enabled: _isEnable,
-              maxLines: null,
-              textAlign: TextAlign.center,
-            ),
+            child: Text(profileController.userInfo.value!.description)
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),

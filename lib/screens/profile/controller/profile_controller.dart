@@ -60,9 +60,9 @@ class ProfileController extends GetxController {
     var response = await dio.get('/posts/list');
     if (response.statusCode == 200) {
       posts.value = (response.data['data'] as List).map((e) => PostModel.fromMap(e)).toList();
-      for( PostModel postModel in posts.value){
+      for( PostModel postModel in posts){
         if(postModel.userId != prefs.getString('userId')){
-          posts.value.remove(postModel);
+          posts.remove(postModel);
         }
       }
       posts.reversed;

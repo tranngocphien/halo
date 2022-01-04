@@ -27,6 +27,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    tfNameController.text = profileController.userInfo.value!.username;
+    tfDescriptionController.text = profileController.userInfo.value!.description;
     return Scaffold(
         appBar: AppBar(
           title: const Text("Chỉnh sửa thông tin"),

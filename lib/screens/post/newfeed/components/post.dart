@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:halo/components/circle_avatar.dart';
 import 'package:halo/models/post.dart';
 import 'package:halo/screens/post/edit_post/edit_post_screen.dart';
 import 'package:halo/screens/postdetail/post_detail.dart';
@@ -12,7 +11,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../constants.dart';
-import 'icon_interact.dart';
 
 class PostItem extends StatefulWidget {
   final PostModel post;
@@ -386,10 +384,6 @@ class _PostItemState extends State<PostItem> {
       backgroundColor: whiteColor.withOpacity(1.0),
     );
   }
-
-
-
-
 
 
   void showSnackBar(String content) {

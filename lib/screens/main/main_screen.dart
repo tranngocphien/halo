@@ -3,7 +3,9 @@ import 'package:halo/constants.dart';
 import 'package:halo/screens/chats/chat_screen_lam.dart';
 import 'package:halo/screens/contact/contact_screen.dart';
 import 'package:halo/screens/post/newfeed/newfeed_screen.dart';
+import 'package:halo/screens/profile/controller/profile_controller.dart';
 import 'package:halo/screens/profile/profile_screen.dart';
+import 'package:get/get.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -13,11 +15,12 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final profileController = Get.put(ProfileController());
   int pageIndex = 0;
   List<Widget> pageLists = <Widget>[
-    ChatScreen(),
-    ContactScreen(),
-    NewFeedScreen(),
+    const ChatScreen(),
+    const ContactScreen(),
+    const NewFeedScreen(),
     ProfileScreen()
   ];
 
