@@ -141,19 +141,19 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Obx(() => Scaffold(
         body: profileController.isLoading.value
             ? Center(
-                child: CircularProgressIndicator(),
-              )
+          child: CircularProgressIndicator(),
+        )
             : Obx(() => ListView(
-                    // padding: EdgeInsets.fromLTRB(0, 24, 0, 0),
-                    children: <Widget>[
-                      buildTop(),
-                      buildIntro(),
-                      ...profileController.posts.value
-                          .map((e) => PostItem(post: e))
-                    ])));
+          // padding: EdgeInsets.fromLTRB(0, 24, 0, 0),
+            children: <Widget>[
+              buildTop(),
+              buildIntro(),
+              ...profileController.posts.value
+                  .map((e) => PostItem(post: e))
+            ]))));
   }
 
   Widget buildTop() {

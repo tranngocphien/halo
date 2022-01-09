@@ -153,6 +153,9 @@ class _PostItemState extends State<PostItem> {
                                 if(isLiked == true){
                                   countLike = countLike + 1;
                                 }
+                                else {
+                                  countLike = countLike - 1;
+                                }
                               });
                             }
                           });
