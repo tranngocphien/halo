@@ -30,6 +30,7 @@ class Chat {
             username: member[i]['username'],
             phonenumber: "",
             gender: "",
+            description: "",
             avatar: member[i]['avatar']["fileName"],
             coverImage: ""));
       }
@@ -71,6 +72,7 @@ class Chat {
             id: tmp["user"]["_id"],
             username: tmp["user"]["username"],
             phonenumber: "",
+            description: "",
             gender: "",
             avatar: mapAvatar[tmp["user"]["avatar"]],
             coverImage: ""),
@@ -105,6 +107,7 @@ class Chat {
           username: other['username'],
           phonenumber: "",
           gender: "",
+          description: "",
           avatar: other['avatar']["fileName"],
           coverImage: "");
     } else {
@@ -116,6 +119,7 @@ class Chat {
               username: user["username"],
               phonenumber: "",
               gender: "",
+              description: "",
               avatar: user['avatar']["fileName"],
               coverImage: "");
         }

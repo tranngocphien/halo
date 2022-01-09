@@ -7,6 +7,8 @@ import 'package:halo/screens/profile/change_password_screen.dart';
 import 'package:halo/screens/profile/update_profile_screen.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 import 'controller/profile_controller.dart';
 
@@ -55,9 +57,6 @@ class ProfileSetting extends StatelessWidget {
               }
             },
           ),
-          ListTile(
-            title: Text('Cập nhật giới thiệu bản thân'),
-          ),
           Container(
             color: Colors.blue,
             height: 1,
@@ -79,6 +78,15 @@ class ProfileSetting extends StatelessWidget {
           ),
           ListTile(
             title: Text('Đăng xuất'),
+            onTap: () async{
+              final prefs = await SharedPreferences.getInstance();
+              prefs.remove('token');
+              prefs.remove('userId');
+              Get.delete<ProfileController>();
+              prefs.clear();
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+            },
           ),
         ],
       ),

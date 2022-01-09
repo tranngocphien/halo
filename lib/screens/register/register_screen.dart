@@ -144,7 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         setState(() {
           _isLoading = false;
         });
-        Navigator.pushNamed(context, "/main");
+        Navigator.pushNamed(context, "/login");
       }
     }
     else {

@@ -34,14 +34,7 @@ class MessageModel {
         DateTime.parse(jsonData["createdAt"]).add(const Duration(hours: 7));
     return MessageModel(
       id: jsonData['_id'],
-      sender: UserInfo(
-        id: user['_id'],
-        username: user['username'],
-        phonenumber: user['phonenumber'],
-        gender: user['gender'],
-        avatar: user['avatar']['fileName'],
-        coverImage: "",
-      ),
+      sender: UserInfo.fromJson(user),
       content: jsonData['content'],
       createdAt: DateTime(
         createdAt.year,

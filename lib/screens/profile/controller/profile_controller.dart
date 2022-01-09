@@ -19,11 +19,12 @@ class ProfileController extends GetxController {
   var gender = Gender.male.obs;
 
   @override
-  void onInit() {
+  void onInit() async {
     // TODO: implement onInit
     isLoading.value = true;
     getUserInfo();
     getListUserPost();
+    // getListUserPost();
     isLoading.value = false;
     super.onInit();
   }
@@ -59,10 +60,13 @@ class ProfileController extends GetxController {
     ));
     var response = await dio.get('/posts/list');
     if (response.statusCode == 200) {
+      posts.clear();
       posts.value = (response.data['data'] as List).map((e) => PostModel.fromMap(e)).toList();
-      for( PostModel postModel in posts.value){
-        if(postModel.userId != prefs.getString('userId')){
-          posts.value.remove(postModel);
+      if(posts.isNotEmpty){
+        for( PostModel postModel in posts){
+          if(postModel.userId != prefs.getString('userId')){
+            posts.remove(postModel);
+          }
         }
       }
       posts.reversed;

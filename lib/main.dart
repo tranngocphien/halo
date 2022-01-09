@@ -8,7 +8,6 @@ import 'package:halo/screens/main/main_screen.dart';
 import 'package:halo/screens/post/newpost/new_post_screen.dart';
 import 'package:halo/screens/register/register_screen.dart';
 import 'package:halo/screens/profile/profile_screen.dart';
-import 'package:halo/screens/profile/profile_setting.dart';
 
 import 'screens/chats/components/components.dart';
 import 'screens/welcome/welcomescreen.dart';
