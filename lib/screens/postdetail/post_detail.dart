@@ -217,6 +217,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 print("Success");
                                 FocusScope.of(context).requestFocus(FocusNode());
                                 contentController.text = "";
+                                setState(() {
+                                  futureComment = fetchComment(widget.post.id);
+                                });
                               }
 
                             });

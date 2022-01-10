@@ -3,14 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:halo/components/circle_avatar.dart';
 import 'package:halo/screens/post/newfeed/components/post.dart';
 import 'package:halo/screens/profile/controller/profile_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:halo/models/post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
-
 import '../../../../constants.dart';
 
 class Body extends StatefulWidget {

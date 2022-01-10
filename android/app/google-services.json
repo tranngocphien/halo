@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "242153364459",
+    "project_id": "halo-c39b5",
+    "storage_bucket": "halo-c39b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242153364459:android:21a0c6851c46ff06dd97ae",
+        "android_client_info": {
+          "package_name": "com.example.halo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "242153364459-ffp3bv7s9qnd81976noqc12q3ke9f8oe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMD8CHYDQa281vcCXAF19rkciKrKcu8AM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "242153364459-ffp3bv7s9qnd81976noqc12q3ke9f8oe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

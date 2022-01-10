@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:halo/api/chat_api.dart';
 import 'package:halo/constants.dart';
 import 'package:halo/models/chat.dart';
+import 'package:halo/models/message_firebase_model.dart';
 import 'package:halo/models/message_model.dart';
 import 'package:halo/models/user_info.dart';
+import 'package:halo/screens/profile/controller/profile_controller.dart';
 import 'package:halo/utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 
 class MessageScreen extends StatefulWidget {
   final Chat chat;
@@ -34,28 +38,48 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   Widget build(BuildContext context) {
     final contentController = TextEditingController();
+    print(widget.chat.id);
 
     return Scaffold(
       appBar: buildAppBar(),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              controller: _controller,
-              itemCount: message.length,
-              itemBuilder: (context, index) {
-                if (widget.loc != -1) {
-                  if (message.length - widget.loc >= 10) {
-                    _goToElement(widget.loc);
-                  } else if (message.length >= 10) {
-                    _goToElement(message.length - 10);
-                  }
+            child:
+                // ListView.builder(
+                //   controller: _controller,
+                //   itemCount: message.length,
+                //   itemBuilder: (context, index) {
+                //     if (widget.loc != -1) {
+                //       if (message.length - widget.loc >= 10) {
+                //         _goToElement(widget.loc);
+                //       } else if (message.length >= 10) {
+                //         _goToElement(message.length - 10);
+                //       }
+                //     } else {
+                //       if (message.length >= 10) {
+                //         _goToElement(message.length - 10);
+                //       }
+                //     }
+                //     return Message(message: message[index]);
+                //   },
+                // ),
+                StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('chat')
+                  .doc(widget.chat.id)
+                  .collection("messages")
+                  .snapshots(),
+              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
                 } else {
-                  if (message.length >= 10) {
-                    _goToElement(message.length - 10);
-                  }
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(10.0),
+                    itemBuilder: (context, index) => buildMessage(snapshot.data.docs[index]),
+                    itemCount: snapshot.data.docs.length,
+                  );
                 }
-                return Message(message: message[index]);
               },
             ),
           ),
@@ -108,6 +132,33 @@ class _MessageScreenState extends State<MessageScreen> {
                   GestureDetector(
                     onTap: () {
                       if (contentController.text.trim().isNotEmpty) {
+                        var content = contentController.text.trim();
+                        ProfileController profileController = Get.find();
+                        var documentReference = FirebaseFirestore.instance
+                            .collection('chat')
+                            .doc(widget.chat.id)
+                            .collection("messages")
+                            .doc(DateTime.now()
+                                .microsecondsSinceEpoch
+                                .toString());
+                        // var documentReference = FirebaseFirestore.instance
+                        //     .collection('messages')
+                        //     .document(groupChatId)
+                        //     .collection(groupChatId)
+                        //     .document(DateTime.now().millisecondsSinceEpoch.toString());
+
+                        FirebaseFirestore.instance
+                            .runTransaction((transaction) async {
+                          await transaction.set(
+                            documentReference,
+                            {
+                              'senderId': profileController.userInfo.value!.id,
+                              'content': content,
+                              'timestamp': DateTime.now().toString(),
+                            },
+                          );
+                        });
+
                         sendMessage(
                           content: contentController.text,
                           chat: widget.chat,
@@ -127,6 +178,52 @@ class _MessageScreenState extends State<MessageScreen> {
                   )
                 ],
               ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget buildMessage( DocumentSnapshot? document) {
+    MessageFirebaseModel messageFirebaseModel = MessageFirebaseModel.fromJson(document!);
+    print(messageFirebaseModel.timestamp);
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: messageFirebaseModel.senderId == UserInfo.userId
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 240,
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                color: messageFirebaseModel.senderId == UserInfo.userId
+                    ? const Color(0xFFa3cbf7)
+                    : const Color(0xFFD6D6D6),
+                borderRadius: const BorderRadius.all(Radius.circular(5))),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  messageFirebaseModel.content,
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      DateTimeConverter.durationToNow(DateTime.parse(messageFirebaseModel.timestamp)),
+                      style: const TextStyle(fontSize: 10),
+                    )
+                  ],
+                )
+              ],
             ),
           )
         ],
@@ -173,6 +270,8 @@ class _MessageScreenState extends State<MessageScreen> {
     );
   }
 }
+
+
 
 class Message extends StatelessWidget {
   final MessageModel message;
