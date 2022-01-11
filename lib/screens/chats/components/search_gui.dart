@@ -72,305 +72,214 @@ class _SearchGUIState extends State<SearchGUI> {
       ),
     );
   }
-
-  Widget buildActiveSearch() => Container(
-        height: 32,
-        padding: const EdgeInsets.only(left: 8),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-        ),
-        child: TextField(
-          onChanged: (value) {
-            setState(() {
-              if (value.isEmpty) {
-                Navigator.pop(context);
-              }
-              _textController.text = value;
-              _textController.selection = TextSelection.fromPosition(
-                  TextPosition(offset: _textController.text.length));
-            });
-          },
-          controller: _textController,
-          focusNode: FocusNode(),
-          autofocus: true,
-          style: const TextStyle(fontSize: mediumSize),
-          decoration: InputDecoration(
-              isDense: true,
-              hintText: "Tìm bạn bè, tin nhắn...",
-              border: InputBorder.none,
-              hintStyle: const TextStyle(
-                fontSize: smallSize,
-                color: subtitleColor,
-              ),
-              suffixIcon: _textController.text.isNotEmpty
-                  ? IconButton(
-                      onPressed: () {
-                        _textController.clear();
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.cancel, color: Colors.black),
-                    )
-                  : null),
-        ),
-      );
-
   // ===================== Xây dựng tìm kiếm cho bạn bè, group chat =====================
 
-  Widget buildFriendListTile(final friendList) {
-    return friendList.isEmpty
-        ? const SizedBox(height: 0)
-        : Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: ListView.builder(
-              primary: false,
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              itemCount: friendList.length,
-              itemBuilder: (context, index) {
-                UserInfo friend = friendList[index];
-                return GestureDetector(
-                  onTap: () async {
-                    Chat chat = await fetchChat(friend.id);
-                    updateSearchHistory(chat);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                MessageScreen(chat: chat, loc: -1)));
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.transparent,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.network(
-                              '$urlFiles/${friend.avatar}',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: textColor,
-                                  width: 0.08,
-                                ),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  friend.username,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: mediumSize),
-                                ),
-                                GestureDetector(
-                                  onTap: null,
-                                  child: CircleAvatar(
-                                    radius: 18,
-                                    backgroundColor: Colors.blue.shade200,
-                                    child: const Icon(Call.call,
-                                        color: Colors.blue, size: 16),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+  Widget friendListTile(UserInfo friend) {
+    return GestureDetector(
+      onTap: () async {
+        Chat chat = await fetchChat(friend.id);
+        updateSearchHistory(chat);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MessageScreen(chat: chat, loc: -1)));
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.transparent,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(
+                  '$urlFiles/${friend.avatar}',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.only(bottom: 8),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: textColor,
+                      width: 0.08,
                     ),
                   ),
-                );
-              },
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      friend.username,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: mediumSize),
+                    ),
+                    GestureDetector(
+                      onTap: null,
+                      child: CircleAvatar(
+                        radius: 18,
+                        backgroundColor: Colors.blue.shade200,
+                        child:
+                            const Icon(Call.call, color: Colors.blue, size: 16),
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
-          );
+          ],
+        ),
+      ),
+    );
   }
 
-  Widget buildGroupListTile(final groupList) {
-    return groupList.isEmpty
-        ? const SizedBox(height: 0)
-        : Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: ListView.builder(
-              primary: false,
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              itemCount: groupList.length,
-              itemBuilder: (context, index) {
-                Chat groupChat = groupList[index];
-                return GestureDetector(
-                  onTap: () {
-                    Chat officialChat = SearchData.cached_chat
-                        .where((chat) => chat.id == groupChat.id)
-                        .toList()[0];
-                    updateSearchHistory(officialChat);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                MessageScreen(chat: officialChat, loc: -1)));
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    width: double.infinity,
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.transparent,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.network(
-                              '$urlFiles/${groupChat.partner[0].avatar}',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Flexible(
-                          flex: 1,
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.only(bottom: 8),
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: textColor,
-                                  width: 0.08,
-                                ),
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  groupChat.chatName,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: mediumSize),
-                                ),
-                                Text(
-                                  groupChat
-                                      .message[groupChat.message.length - 1]
-                                      .content,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: smallSize,
-                                      color: subtitleColor),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+  Widget groupListTile(Chat groupChat) {
+    return GestureDetector(
+      onTap: () {
+        Chat officialChat = SearchData.cached_chat
+            .where((chat) => chat.id == groupChat.id)
+            .toList()[0];
+        updateSearchHistory(officialChat);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    MessageScreen(chat: officialChat, loc: -1)));
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        width: double.infinity,
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.transparent,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(
+                  '$urlFiles/${groupChat.partner[0].avatar}',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Flexible(
+              flex: 1,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.only(bottom: 8),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: textColor,
+                      width: 0.08,
                     ),
                   ),
-                );
-              },
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      groupChat.chatName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: mediumSize),
+                    ),
+                    Text(
+                      groupChat.message[groupChat.message.length - 1].content,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: smallSize,
+                          color: subtitleColor),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          );
+          ],
+        ),
+      ),
+    );
   }
 
-  Widget buildMessageListTile(final messageList) {
-    return messageList.isEmpty
-        ? const SizedBox(height: 0)
-        : Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: ListView.builder(
-              primary: false,
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              itemCount: messageList.length,
-              itemBuilder: (context, index) {
-                Chat chat = messageList[index]["chat"];
-                List<int> indexList = messageList[index]["index"];
-                return GestureDetector(
-                  onTap: () {
-                    updateSearchHistory(chat);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MessageMatch(
-                                chat: chat, indexList: indexList)));
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 5),
-                    width: double.infinity,
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.transparent,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.network(
-                              '$urlFiles/${chat.partner is UserInfo ? chat.partner.avatar : chat.partner[0].avatar}',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Flexible(
-                          flex: 1,
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.only(bottom: 10),
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: textColor,
-                                  width: 0.08,
-                                ),
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  chat.chatName,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: mediumSize),
-                                ),
-                                Text(
-                                  '${indexList.length} tin nhắn trùng khớp',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: smallSize,
-                                      color: subtitleColor),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+  Widget messageListTile(Chat chat, List<int> indexList) {
+    return GestureDetector(
+      onTap: () {
+        updateSearchHistory(chat);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    MessageMatch(chat: chat, indexList: indexList)));
+      },
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        width: double.infinity,
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.transparent,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(
+                  '$urlFiles/${chat.partner is UserInfo ? chat.partner.avatar : chat.partner[0].avatar}',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Flexible(
+              flex: 1,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.only(bottom: 10),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: textColor,
+                      width: 0.08,
                     ),
                   ),
-                );
-              },
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      chat.chatName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: mediumSize),
+                    ),
+                    Text(
+                      '${indexList.length} tin nhắn trùng khớp',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: smallSize,
+                          color: subtitleColor),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          );
+          ],
+        ),
+      ),
+    );
   }
 
   Widget buildListTile(friendList, groupChatList, messageList) {
@@ -391,45 +300,44 @@ class _SearchGUIState extends State<SearchGUI> {
       );
     }
 
-    return Scrollbar(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            friendList.isEmpty && groupChatList.isEmpty
-                ? Container(height: 0)
-                : Container(
-                    margin: const EdgeInsets.only(top: 10, left: 10),
-                    child: Text(
-                      "Liên hệ (${friendList.length + groupChatList.length})",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: mediumSize,
-                      ),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          friendList.isEmpty && groupChatList.isEmpty
+              ? Container(height: 0)
+              : Container(
+                  margin: const EdgeInsets.only(top: 10, left: 10),
+                  child: Text(
+                    "Liên hệ (${friendList.length + groupChatList.length})",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: mediumSize,
                     ),
                   ),
-            buildFriendListTile(friendList),
-            buildGroupListTile(groupChatList),
-            ((friendList.isNotEmpty || groupChatList.isNotEmpty) &&
-                    messageList.isNotEmpty)
-                ? const Divider(thickness: 10)
-                : const SizedBox(height: 0),
-            messageList.isEmpty
-                ? Container(height: 0)
-                : Container(
-                    margin: const EdgeInsets.only(top: 10, left: 10),
-                    child: Text(
-                      "Tin nhắn (${messageList.length})",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: mediumSize,
-                      ),
+                ),
+          ...friendList.map((friend) => friendListTile(friend)),
+          ...groupChatList.map((groupChat) => groupListTile(groupChat)),
+          ((friendList.isNotEmpty || groupChatList.isNotEmpty) &&
+                  messageList.isNotEmpty)
+              ? const Divider(thickness: 10)
+              : const SizedBox(height: 0),
+          messageList.isEmpty
+              ? Container(height: 0)
+              : Container(
+                  margin: const EdgeInsets.only(top: 10, left: 10),
+                  child: Text(
+                    "Tin nhắn (${messageList.length})",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: mediumSize,
                     ),
                   ),
-            buildMessageListTile(messageList)
-          ],
-        ),
+                ),
+          ...messageList.map(
+              (message) => messageListTile(message["chat"], message["index"]))
+        ],
       ),
     );
   }

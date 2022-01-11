@@ -116,3 +116,17 @@ Future<void> sendMessage({
     throw Exception('Unable to fetch products from the REST API');
   }
 }
+
+Future<void> deleteAllMessage(String chatId) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token') ?? "";
+
+  final response = await http.post(
+      Uri.parse('$urlApi/chats/delMessages/$chatId'),
+      headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
+  if (response.statusCode == 200) {
+    print("Đã xoá thành công!");
+  } else {
+    throw Exception('Unable to fetch products from the REST API');
+  }
+}

@@ -105,7 +105,7 @@ class _HistoryRepairState extends State<HistoryRepair> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Image.network(
-                                '$urlFiles/${chat.partner.avartar}',
+                                '$urlFiles/${chat.partner.avatar}',
                                 fit: BoxFit.cover,
                               ),
                             ),
