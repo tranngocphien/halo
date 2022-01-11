@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:halo/data/data.dart';
 import 'package:halo/screens/profile/change_password_screen.dart';
 import 'package:halo/screens/profile/update_profile_screen.dart';
 import 'package:get/get.dart';
@@ -94,8 +95,13 @@ class ProfileSetting extends StatelessWidget {
               prefs.remove('userId');
               Get.delete<ProfileController>();
               prefs.clear();
+              SearchData.cached_chat.clear();
+              SearchData.friendList.clear();
+              SearchData.groupChatList.clear();
+              SearchData.searched_chat.clear();
+              SearchData.searched_word.clear();
               Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+                  .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
             },
           ),
         ],

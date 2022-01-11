@@ -80,7 +80,7 @@ class _NewPostState extends State<NewPost> {
                         _contentController.text, _imageFileList, _videoFile);
                     Navigator.of(context).popAndPushNamed('/main');
                   },
-                  child: Text("Đăng")))
+                  child: const Text("Đăng")))
         ],
       ),
       body: Column(
@@ -178,7 +178,12 @@ class _NewPostState extends State<NewPost> {
     if (response.statusCode == 200) {
       print("success");
     } else {
-      print("failed");
+      SnackBar snackBar = const SnackBar(
+        content: Text('Thêm bài viết không thành công'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
+
+
 }
