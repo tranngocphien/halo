@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:halo/models/models.dart';
 import 'package:halo/screens/profile/change_password_screen.dart';
+import 'package:halo/screens/profile/controller/profile_controller.dart';
 import 'package:halo/screens/profile/update_profile_screen.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,10 +25,12 @@ class SettingUserProfile extends StatefulWidget {
 
 class _SettingUserProfileState extends State<SettingUserProfile> {
 
+  ProfileController profileController = Get.find();
   bool isBlock = false;
 
   @override
   Widget build(BuildContext context) {
+    isBlock = profileController.checkBlocked(widget.userInfo.id);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.userInfo.username),
@@ -87,6 +90,7 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
               if (code == 200) {
                 setState(() {
                   isBlock = true;
+                  profileController.getUserInfo();
                   SnackBar snackBar = SnackBar(
                     content: Text('Chặn ${widget.userInfo.username} thành công'),
                   );
@@ -129,6 +133,7 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
               if (code == 200) {
                 setState(() {
                   isBlock = false;
+                  profileController.getUserInfo();
                   SnackBar snackBar = SnackBar(
                     content: Text('Bỏ chặn ${widget.userInfo.username} thành công'),
                   );
