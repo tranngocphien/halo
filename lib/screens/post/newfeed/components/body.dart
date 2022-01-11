@@ -3,14 +3,13 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:halo/components/circle_avatar.dart';
 import 'package:halo/screens/post/newfeed/components/post.dart';
+import 'package:halo/screens/profile/controller/profile_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:halo/models/post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:get/get.dart';
 import '../../../../constants.dart';
-
 
 class Body extends StatefulWidget {
   const Body({
@@ -33,6 +32,7 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
+    ProfileController profileController = Get.find();
     return SafeArea(
       child: Column(
         children: [
@@ -70,13 +70,24 @@ class _BodyState extends State<Body> {
             decoration: const BoxDecoration(color: whiteColor),
             child: Row(
               children: [
-                const ProfileAvatar(size: 24,),
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.red,
+                      image: DecorationImage(
+                          image: NetworkImage(
+                              '$urlFiles/${profileController.userInfo.value!.avatar}'), fit: BoxFit.cover),
+                  ),
+                ),
                 const SizedBox(
                   width: kDefaultPadding,
                 ),
                 Expanded(
                     child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: kDefaultPadding),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: kDefaultPadding),
                   child: GestureDetector(
                     onTap: () {
                       Navigator.pushNamed(context, "/newpost");
@@ -88,7 +99,6 @@ class _BodyState extends State<Body> {
                     ),
                   ),
                 )),
-
               ],
             ),
           ),
@@ -100,14 +110,15 @@ class _BodyState extends State<Body> {
                     child: ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
-                          return PostItem(post: snapshot.data![snapshot.data!.length - index - 1]);
+                          return PostItem(
+                              post: snapshot
+                                  .data![snapshot.data!.length - index - 1]);
                         }),
                   );
                 }
                 return const Center(child: CircularProgressIndicator());
               })
         ],
-
       ),
     );
   }
@@ -117,12 +128,12 @@ Future<List<PostModel>> fetchPost() async {
   final prefs = await SharedPreferences.getInstance();
 
   final token = prefs.getString('token') ?? "";
-  var response = await http.get(
-      Uri.parse("${urlApi}/posts/list"),
+  var response = await http.get(Uri.parse("${urlApi}/posts/list"),
       headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
 
   if (response.statusCode == 200) {
-    final parsed = json.decode(response.body)["data"].cast<Map<String, dynamic>>();
+    final parsed =
+        json.decode(response.body)["data"].cast<Map<String, dynamic>>();
     return parsed.map<PostModel>((json) => PostModel.fromMap(json)).toList();
   } else {
     throw Exception('Failed to load post');

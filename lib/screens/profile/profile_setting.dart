@@ -1,8 +1,16 @@
 // ignore_for_file: prefer_const_constructors, duplicate_ignore, prefer_const_literals_to_create_immutables
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:halo/screens/profile/change_password_screen.dart';
 import 'package:halo/screens/profile/update_profile_screen.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+
+import 'controller/profile_controller.dart';
 
 class ProfileSetting extends StatelessWidget {
   final String username;
@@ -10,6 +18,8 @@ class ProfileSetting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ProfileController profileController = Get.find();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(username),
@@ -28,13 +38,24 @@ class ProfileSetting extends StatelessWidget {
           ),
           ListTile(
             title: Text('Đổi ảnh đại diện'),
+            onTap: () async {
+              final pickedFileList =
+                  await ImagePicker().pickImage(source: ImageSource.gallery);
+              if (pickedFileList != null) {
+                profileController.changeAvatar(pickedFileList, true);
+              }
+            },
           ),
           ListTile(
             // ignore: prefer_const_constructors
             title: Text('Đổi ảnh bìa'),
-          ),
-          ListTile(
-            title: Text('Cập nhật giới thiệu bản thân'),
+            onTap: () async {
+              final pickedFileList =
+                  await ImagePicker().pickMultiImage();
+              if (pickedFileList != null) {
+                profileController.changeAvatar(pickedFileList[0], false);
+              }
+            },
           ),
           Container(
             color: Colors.blue,
@@ -57,6 +78,15 @@ class ProfileSetting extends StatelessWidget {
           ),
           ListTile(
             title: Text('Đăng xuất'),
+            onTap: () async{
+              final prefs = await SharedPreferences.getInstance();
+              prefs.remove('token');
+              prefs.remove('userId');
+              Get.delete<ProfileController>();
+              prefs.clear();
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+            },
           ),
         ],
       ),

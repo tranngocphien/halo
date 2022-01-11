@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:halo/components/circle_avatar.dart';
 import 'package:halo/models/post.dart';
 import 'package:halo/screens/post/edit_post/edit_post_screen.dart';
 import 'package:halo/screens/postdetail/post_detail.dart';
@@ -12,7 +11,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../constants.dart';
-import 'icon_interact.dart';
 
 class PostItem extends StatefulWidget {
   final PostModel post;
@@ -29,6 +27,9 @@ class _PostItemState extends State<PostItem> {
   var isDeleted = false;
   var countLike;
   var isLiked = false;
+
+  final subjectCtrl = TextEditingController();
+  final detailCtrl = TextEditingController();
 
 
   @override
@@ -65,9 +66,7 @@ class _PostItemState extends State<PostItem> {
               children: [
                 Row(
                   children: [
-                    const ProfileAvatar(
-                      size: 24,
-                    ),
+                    Image.network("$urlFiles/${widget.post.avatar}", height: 24, width: 24,),
                     const SizedBox(
                       width: 8,
                     ),
@@ -153,6 +152,9 @@ class _PostItemState extends State<PostItem> {
                                 isLiked = !isLiked;
                                 if(isLiked == true){
                                   countLike = countLike + 1;
+                                }
+                                else {
+                                  countLike = countLike - 1;
                                 }
                               });
                             }
@@ -282,6 +284,7 @@ class _PostItemState extends State<PostItem> {
   }
 
   Future<dynamic> buildShowFriendModalBottomSheet(BuildContext context) {
+
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext bc) {
@@ -301,7 +304,44 @@ class _PostItemState extends State<PostItem> {
                       width: 20,
                     ),
                     TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pop(context);
+                          showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Báo cáo bài viết'),
+                              content: Column(
+                                children: [
+                                  TextField(
+                                    controller: subjectCtrl,
+                                    style: const TextStyle(fontSize: 14),
+                                    decoration:
+                                    const InputDecoration(labelText: "Subject"),
+                                  ),
+                                  TextField(
+                                    controller: detailCtrl,
+                                    style: const TextStyle(fontSize: 14),
+                                    decoration:
+                                    const InputDecoration(labelText: "Detail"),
+                                  )
+                                ],
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    reportPost(widget.post.id, subjectCtrl.text, detailCtrl.text);
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+
+                        },
                         child: const Text(
                           "Báo cáo bài viết",
                           style: TextStyle(fontSize: 20, color: Colors.black),
@@ -362,12 +402,16 @@ class _PostItemState extends State<PostItem> {
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
   }
 
-  Future<http.Response> reportPost(String postId) async {
+  Future<http.Response> reportPost(String postId, String subject, String detail) async {
     var url = "${urlApi}/postReport/create/${postId}";
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
+    Map data = {
+      "subject": subject,
+      "details": detail
+    };
     return await http.post(Uri.parse(url),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
+        headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'}, body: data);
   }
 
   Future<http.Response> likePost(String postId) async {

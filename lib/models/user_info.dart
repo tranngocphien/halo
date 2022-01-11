@@ -3,6 +3,7 @@ class UserInfo {
   late String username;
   late String phonenumber;
   late String gender;
+  late String description;
   late String avatar;
   late String coverImage;
   late String id;
@@ -11,6 +12,7 @@ class UserInfo {
     required this.username,
     required this.phonenumber,
     required this.gender,
+    required this.description,
     required this.avatar,
     required this.coverImage,
     required this.id,
@@ -21,6 +23,7 @@ class UserInfo {
         username: json['username'],
         phonenumber: json['phonenumber'],
         gender: json['gender'],
+        description: json['description'] ?? '',
         avatar: json['avatar']['fileName'] ?? '',
         coverImage:
             json['cover_image'] == null ? '' : json['cover_image']['fileName'],
@@ -31,6 +34,7 @@ class UserInfo {
       username: "",
       phonenumber: "",
       gender: "",
+      description: "",
       avatar: "",
       coverImage: "",
       id: "");

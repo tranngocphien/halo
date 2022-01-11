@@ -7,22 +7,27 @@ import 'package:halo/models/models.dart';
 import 'package:halo/models/user_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
-import '../../../constants.dart';
+import '../../../../constants.dart';
 import 'package:image_picker/image_picker.dart';
 
 
-class ProfileController extends GetxController {
+class UserProfileController extends GetxController {
   var isLoading = true.obs;
   var userInfo = Rx<UserInfo?>(null);
   var dob = DateTime.now().obs;
   var posts = List<PostModel>.empty(growable: true).obs;
   var gender = Gender.male.obs;
 
+  late String userId;
+
+  UserProfileController(this.userId);
+
   @override
   void onInit() async {
     // TODO: implement onInit
     isLoading.value = true;
     getUserInfo();
+    getListUserPost();
     // getListUserPost();
     isLoading.value = false;
     super.onInit();
@@ -40,14 +45,13 @@ class ProfileController extends GetxController {
         'Authorization': 'Bearer $token',
       },
     ));
-    var response = await dio.get('/users/show');
+    var url = '/users/show/'+userId;
+    var response = await dio.get(url);
     userInfo.value = UserInfo.fromJson(response.data['data']);
-
-    getListUserPost(UserInfo.fromJson(response.data['data']).id);
 
   }
 
-  Future<void> getListUserPost(String userId) async {
+  Future<void> getListUserPost() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
 
@@ -59,20 +63,17 @@ class ProfileController extends GetxController {
         'Authorization': 'Bearer $token',
       },
     ));
-
-    print("userId controller : "+userId);
-    var response = await dio.get('/posts/list?userId=$userId');
-
+    var response = await dio.get('/posts/list');
     if (response.statusCode == 200) {
       posts.clear();
       posts.value = (response.data['data'] as List).map((e) => PostModel.fromMap(e)).toList();
-      // if(posts.isNotEmpty){
-      //   for( PostModel postModel in posts){
-      //     if(postModel.userId != prefs.getString('userId')){
-      //       posts.remove(postModel);
-      //     }
-      //   }
-      // }
+      if(posts.isNotEmpty){
+        for( PostModel postModel in posts){
+          if(postModel.userId != prefs.getString('userId')){
+            posts.remove(postModel);
+          }
+        }
+      }
       posts.reversed;
     } else {
 

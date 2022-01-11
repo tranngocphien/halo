@@ -131,6 +131,6 @@ class UFriend{
   UFriend(this.id, this.username, this.avatar, this.gender);
   factory UFriend.fromJson(Map<String, dynamic> json) {
     //print("fromMap");
-    return UFriend(json["_id"], json["username"], json["avatar"]["_id"], json["gender"]);
+    return UFriend(json["_id"], json["username"], json["avatar"]["fileName"], json["gender"]);
   }
 }

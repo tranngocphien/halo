@@ -43,7 +43,10 @@ List<Chat> parseChats(dynamic responseBody) {
   final chats = json.decode(responseBody)["chat"].cast<Map<String, dynamic>>();
 
   List<Chat> result = chats.map<Chat>((json) => Chat.fromJson(json)).toList();
-
+  print("Chat ID");
+  for(Chat chat in result){
+    print(chat.id);
+  }
   return result;
 }
 
