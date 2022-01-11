@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:halo/models/user_info.dart';
 import 'package:halo/screens/contact/add_friend/components/friend_component.dart';
 
 import '../../../constants.dart';
@@ -23,7 +24,7 @@ class _SearchFriend extends State<SearchFriendScreen> {
 
   bool loading = false;
 
-   late Future<List<UFriend>> futureSearchFriend;
+   late Future<List<UserInfo>> futureSearchFriend;
 
   @override
   void initState() {
@@ -62,7 +63,7 @@ class _SearchFriend extends State<SearchFriendScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _phoneNumber,
-                      style: TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
                         hintText: "Nhập số điện thoại"
@@ -92,7 +93,7 @@ class _SearchFriend extends State<SearchFriendScreen> {
 
 
                       },
-                      child: Text("Tìm", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500)),
+                      child: const Text("Tìm", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500)),
                       color: primaryColor,
                     ),
                   )
@@ -100,7 +101,7 @@ class _SearchFriend extends State<SearchFriendScreen> {
               ),
             ),
             Container(
-              child: loading == true ? CircularProgressIndicator() : FutureBuilder<List<UFriend>>(
+              child: loading == true ? const Center(child: CircularProgressIndicator()) : FutureBuilder<List<UserInfo>>(
                   future: futureSearchFriend,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
@@ -112,7 +113,7 @@ class _SearchFriend extends State<SearchFriendScreen> {
                             }),
                       );
                     }
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }),
             )
           ],
@@ -123,7 +124,7 @@ class _SearchFriend extends State<SearchFriendScreen> {
 
 }
 
-Future<List<UFriend>> fetchSearchFriends(String keyword) async {
+Future<List<UserInfo>> fetchSearchFriends(String keyword) async {
   final prefs = await SharedPreferences.getInstance();
 
   final token = prefs.getString('token') ?? "";
@@ -141,9 +142,9 @@ Future<List<UFriend>> fetchSearchFriends(String keyword) async {
   }
 }
 
-List<UFriend> parseFriends(String responseBody) {
+List<UserInfo> parseFriends(String responseBody) {
   //print(responseBody);
   final parsed = json.decode(responseBody)["data"].cast<Map<String, dynamic>>();
   print(parsed);
-  return parsed.map<UFriend>((json) =>UFriend.fromJson(json)).toList();
+  return parsed.map<UserInfo>((json) =>UserInfo.fromJson(json)).toList();
 }

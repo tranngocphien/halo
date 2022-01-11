@@ -2,8 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:halo/api/search_api.dart';
 import 'package:halo/models/chat.dart';
+import 'package:halo/models/models.dart';
 import 'package:halo/screens/contact/contact_screen.dart';
 import 'package:halo/screens/message/message_screen.dart';
+
+import '../../../constants.dart';
 
 class Friend extends StatelessWidget {
   final UFriend friend;
@@ -15,7 +18,7 @@ class Friend extends StatelessWidget {
     // TODO: implement build
     return Container(
       child: Padding(
-        padding: EdgeInsets.only(left: 20, top: 25),
+        padding: const EdgeInsets.only(left: 20, top: 25),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -35,12 +38,12 @@ class Friend extends StatelessWidget {
                     CircleAvatar(
                       radius: 25,
                       backgroundImage:
-                          AssetImage("assets/images/profile_avatar.jpg"),
+                          NetworkImage('$urlFiles/${friend.avatar}'),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 10.0),
+                      padding: const EdgeInsets.only(left: 10.0),
                       child:
-                          Text(friend.username, style: TextStyle(fontSize: 23)),
+                          Text(friend.username, style: const TextStyle(fontSize: 23)),
                     ),
                   ],
                 ),
