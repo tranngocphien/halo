@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:halo/api/chat_api.dart';
+import 'package:halo/data/data.dart';
 import 'package:halo/models/chat.dart';
 import 'package:halo/constants.dart';
 import 'package:halo/icons/icons.dart';
@@ -127,6 +128,21 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  void changeChats() {
+    chats.clear();
+    chats.addAll([
+      ...SearchData.cached_chat
+          .where((element) => element.message.isNotEmpty)
+          .toList()
+    ]);
+    chats.sort((chat1, chat2) {
+      final lastMessage1 = chat1.message[chat1.message.length - 1];
+      final lastMessage2 = chat2.message[chat2.message.length - 1];
+
+      return lastMessage1.createdAt.compareTo(lastMessage2.createdAt);
+    });
+  }
+
   void changeState() {
     _textController.text = '';
     if (leadingIcon.icon == Search.search) {
@@ -141,7 +157,48 @@ class _ChatScreenState extends State<ChatScreen> {
           style: TextStyle(fontSize: mediumSize, color: Colors.white));
       isSearchedStart = false;
       isSearchedScroll = false;
+      changeChats();
     }
+  }
+
+  Widget buildChatListView(items) {
+    return ListView.builder(
+      itemBuilder: (ctx, index) {
+        return index == (items.length)
+            ? Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                color: iconslightColor,
+                child: Column(children: <Widget>[
+                  const Text("Dễ dàng tìm kiếm và trò chuyện với bạn bè",
+                      style: TextStyle(
+                        color: subtitleColor,
+                        fontSize: smallSize,
+                      )),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/searchFriend');
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.only(left: 12, right: 12),
+                      child: Text("Tìm thêm bạn",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: smallSize)),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.blue,
+                      onPrimary: Colors.white,
+                      shape: const StadiumBorder(),
+                    ),
+                  ),
+                ]),
+              )
+            : item(index, items[index].id);
+      },
+      itemCount: items.length + 1,
+    );
   }
 
   Widget buildListView() => RefreshIndicator(
@@ -151,44 +208,7 @@ class _ChatScreenState extends State<ChatScreen> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               chats = snapshot.data!;
-              return ListView.builder(
-                itemBuilder: (ctx, index) {
-                  return index == (snapshot.data!.length)
-                      ? Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          color: iconslightColor,
-                          child: Column(children: <Widget>[
-                            const Text(
-                                "Dễ dàng tìm kiếm và trò chuyện với bạn bè",
-                                style: TextStyle(
-                                  color: subtitleColor,
-                                  fontSize: smallSize,
-                                )),
-                            const SizedBox(height: 10),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context, '/searchFriend');
-                              },
-                              child: const Padding(
-                                padding: EdgeInsets.only(left: 12, right: 12),
-                                child: Text("Tìm thêm bạn",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: smallSize)),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.blue,
-                                onPrimary: Colors.white,
-                                shape: const StadiumBorder(),
-                              ),
-                            ),
-                          ]),
-                        )
-                      : item(index);
-                },
-                itemCount: snapshot.data!.length + 1,
-              );
+              return buildChatListView(chats);
             }
             return const Center(child: CircularProgressIndicator());
           }));
@@ -303,8 +323,9 @@ class _ChatScreenState extends State<ChatScreen> {
         });
   }
 
-  Widget item(int index) {
+  Widget item(int index, String id) {
     return Slidable(
+      key: Key(id),
       actionPane: const SlidableDrawerActionPane(),
       actionExtentRatio: 0.2,
       secondaryActions: [
@@ -361,7 +382,16 @@ class _ChatScreenState extends State<ChatScreen> {
         break;
 
       case "delete":
-        setState(() => chats.removeAt(index));
+        setState(() {
+          String chatId = chats[index].id;
+          for (var i = 0; i < SearchData.cached_chat.length; i++) {
+            if (SearchData.cached_chat[i].id == chatId) {
+              SearchData.cached_chat[i].message = [];
+            }
+          }
+          chats.removeAt(index);
+          deleteAllMessage(chatId);
+        });
         break;
     }
   }
