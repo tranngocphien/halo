@@ -23,7 +23,6 @@ class ProfileController extends GetxController {
     // TODO: implement onInit
     isLoading.value = true;
     getUserInfo();
-    getListUserPost();
     // getListUserPost();
     isLoading.value = false;
     super.onInit();
@@ -44,9 +43,11 @@ class ProfileController extends GetxController {
     var response = await dio.get('/users/show');
     userInfo.value = UserInfo.fromJson(response.data['data']);
 
+    getListUserPost(UserInfo.fromJson(response.data['data']).id);
+
   }
 
-  Future<void> getListUserPost() async {
+  Future<void> getListUserPost(String userId) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
 
@@ -58,17 +59,20 @@ class ProfileController extends GetxController {
         'Authorization': 'Bearer $token',
       },
     ));
-    var response = await dio.get('/posts/list');
+
+    print("userId controller : "+userId);
+    var response = await dio.get('/posts/list?userId=$userId');
+
     if (response.statusCode == 200) {
       posts.clear();
       posts.value = (response.data['data'] as List).map((e) => PostModel.fromMap(e)).toList();
-      if(posts.isNotEmpty){
-        for( PostModel postModel in posts){
-          if(postModel.userId != prefs.getString('userId')){
-            posts.remove(postModel);
-          }
-        }
-      }
+      // if(posts.isNotEmpty){
+      //   for( PostModel postModel in posts){
+      //     if(postModel.userId != prefs.getString('userId')){
+      //       posts.remove(postModel);
+      //     }
+      //   }
+      // }
       posts.reversed;
     } else {
 
