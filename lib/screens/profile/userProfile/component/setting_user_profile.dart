@@ -71,7 +71,7 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
               String userId = prefs.getString('userId') ?? "";
 
               //print(token);
-              Map data = {"user_id": widget.userInfo.id, "type": '0'};
+              Map data = {"user_id": widget.userInfo.id, "type": '1'};
 
               //print(data);
 
@@ -113,7 +113,7 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
               String userId = prefs.getString('userId') ?? "";
 
               //print(token);
-              Map data = {"user_id": widget.userInfo.id, "type": '1'};
+              Map data = {"user_id": widget.userInfo.id, "type": '0'};
 
               //print(data);
 
