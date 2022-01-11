@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:halo/api/post_api.dart';
 import 'package:halo/models/post.dart';
 import 'package:halo/screens/post/edit_post/edit_post_screen.dart';
 import 'package:halo/screens/postdetail/post_detail.dart';
@@ -146,7 +147,7 @@ class _PostItemState extends State<PostItem> {
                           color: isLiked ?primaryColor :Colors.grey[500], shape: BoxShape.circle),
                       child: GestureDetector(
                         onTap: (){
-                          likePost(widget.post.id).then((value) {
+                          PostAPI.instance.likePost(widget.post.id).then((value) {
                             if(value.statusCode == 200){
                               setState(() {
                                 isLiked = !isLiked;
@@ -226,7 +227,7 @@ class _PostItemState extends State<PostItem> {
                     ),
                     TextButton(
                         onPressed: () {
-                          deletePost(widget.post.id, context).then((value) {
+                          PostAPI.instance.deletePost(widget.post.id).then((value) {
                             Navigator.pop(context);
                             if (value.statusCode == 200) {
                               setState(() {
@@ -333,7 +334,7 @@ class _PostItemState extends State<PostItem> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    reportPost(widget.post.id, subjectCtrl.text, detailCtrl.text);
+                                    PostAPI.instance.reportPost(widget.post.id, subjectCtrl.text, detailCtrl.text);
                                   },
                                   child: const Text('OK'),
                                 ),
@@ -359,7 +360,7 @@ class _PostItemState extends State<PostItem> {
                     ),
                     TextButton(
                         onPressed: () {
-                          deletePost(widget.post.id, context).then((value) {
+                          PostAPI.instance.deletePost(widget.post.id).then((value) {
                             Navigator.pop(context);
                             if (value.statusCode == 200) {
                               setState(() {
@@ -394,34 +395,34 @@ class _PostItemState extends State<PostItem> {
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
-  Future<http.Response> deletePost(String postId, BuildContext context) async {
-    var url = "${urlApi}/posts/delete/${postId}";
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token') ?? "";
-    return await http.get(Uri.parse(url),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
-  }
-
-  Future<http.Response> reportPost(String postId, String subject, String detail) async {
-    var url = "${urlApi}/postReport/create/${postId}";
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token') ?? "";
-    Map data = {
-      "subject": subject,
-      "details": detail
-    };
-    return await http.post(Uri.parse(url),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'}, body: data);
-  }
-
-  Future<http.Response> likePost(String postId) async {
-    var url = "${urlApi}/postLike/action/${postId}";
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token') ?? "";
-    final userId = prefs.getString('userId');
-    Map data = {
-      'userId': userId
-    };
-    return await http.post(Uri.parse(url),body: data, headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
-  }
+  // Future<http.Response> deletePost(String postId, BuildContext context) async {
+  //   var url = "${urlApi}/posts/delete/${postId}";
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token') ?? "";
+  //   return await http.get(Uri.parse(url),
+  //       headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
+  // }
+  //
+  // Future<http.Response> reportPost(String postId, String subject, String detail) async {
+  //   var url = "${urlApi}/postReport/create/${postId}";
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token') ?? "";
+  //   Map data = {
+  //     "subject": subject,
+  //     "details": detail
+  //   };
+  //   return await http.post(Uri.parse(url),
+  //       headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'}, body: data);
+  // }
+  //
+  // Future<http.Response> likePost(String postId) async {
+  //   var url = "${urlApi}/postLike/action/${postId}";
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token') ?? "";
+  //   final userId = prefs.getString('userId');
+  //   Map data = {
+  //     'userId': userId
+  //   };
+  //   return await http.post(Uri.parse(url),body: data, headers: {HttpHeaders.authorizationHeader: 'Bearer ${token}'});
+  // }
 }

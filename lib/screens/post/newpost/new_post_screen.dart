@@ -87,15 +87,15 @@ class _NewPostState extends State<NewPost> {
         children: [
           Expanded(
               child: Container(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
                 TextField(
                   controller: _contentController,
                   keyboardType: TextInputType.multiline,
                   maxLines: 10,
-                  style: TextStyle(fontSize: 20),
-                  decoration: InputDecoration(
+                  style: const TextStyle(fontSize: 20),
+                  decoration: const InputDecoration(
                       border: InputBorder.none, hintText: "Bạn đang nghĩ gì"),
                 ),
                 Expanded(
@@ -131,12 +131,12 @@ class _NewPostState extends State<NewPost> {
                   onPressed: () {
                     _pickImage();
                   },
-                  icon: Icon(Icons.image)),
+                  icon: const Icon(Icons.image)),
               IconButton(
                   onPressed: () {
                     _pickVideo();
                   },
-                  icon: Icon(Icons.video_collection))
+                  icon: const Icon(Icons.video_collection))
             ],
           )
         ],
