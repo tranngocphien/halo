@@ -9,14 +9,14 @@ class Body extends StatelessWidget {
     return Column(
       children: [
         Expanded(child: Column()),
-        Divider(thickness: 3,),
+        const Divider(thickness: 3,),
         Container(
-          padding: EdgeInsets.all(kDefaultPadding/2),
+          padding: const EdgeInsets.all(kDefaultPadding/2),
           child: SafeArea(
             child: Row(
               children: [
-                Icon(Icons.mic,color: primaryColor,),
-                SizedBox(width: 10,),
+                const Icon(Icons.mic,color: primaryColor,),
+                const SizedBox(width: 10,),
                 Expanded(child:
                   Container(
                     decoration: BoxDecoration(
@@ -28,7 +28,7 @@ class Body extends StatelessWidget {
                         vertical: 4, horizontal: 8
                       ),
                       child: Row(
-                        children: [
+                        children: const [
                           Icon(Icons.sentiment_satisfied_outlined),
                           SizedBox(width: 10),
                           Expanded(
@@ -47,8 +47,8 @@ class Body extends StatelessWidget {
                       ),
                     ),
                   )),
-                SizedBox(width: 10,),
-                Icon(
+                const SizedBox(width: 10,),
+                const Icon(
                     Icons.send,
                     color: primaryColor,
                 )
