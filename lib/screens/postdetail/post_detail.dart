@@ -6,6 +6,7 @@ import 'package:halo/components/circle_avatar.dart';
 import 'package:halo/constants.dart';
 import 'package:halo/models/comment.dart';
 import 'package:halo/models/post.dart';
+import 'package:halo/utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -73,7 +74,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 ),
                                 Row(children: [
                                   Text(
-                                    "10 phút",
+                                    DateTimeConverter.durationToNow(widget.post.createAt),
                                     style: TextStyle(
                                         color: Colors.grey[500], fontSize: 12),
                                   ),
@@ -90,8 +91,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             ),
                           ],
                         ),
-                        IconButton(
-                            onPressed: () {}, icon: Icon(Icons.more_horiz))
                       ],
                     ),
                     const SizedBox(

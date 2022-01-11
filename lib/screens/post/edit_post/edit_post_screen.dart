@@ -6,10 +6,12 @@ import 'package:halo/components/circle_avatar.dart';
 import 'package:halo/constants.dart';
 import 'package:halo/models/image_model.dart';
 import 'package:halo/models/post.dart';
+import 'package:halo/screens/profile/controller/profile_controller.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:halo/screens/post/newpost/components/image.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 
 
 
@@ -261,6 +263,8 @@ class _PostDetailScreenState extends State<EditPostScreen> {
     var response = await dio.post("/posts/edit/${widget.post.id}", data: data);
     if (response.statusCode == 200) {
       print("success");
+      ProfileController profileController = Get.find();
+      profileController.updateUsesInfo();
     } else {
       print("failed");
     }
