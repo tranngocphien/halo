@@ -7,9 +7,11 @@ import 'package:halo/api/post_api.dart';
 import 'package:halo/models/post.dart';
 import 'package:halo/screens/post/edit_post/edit_post_screen.dart';
 import 'package:halo/screens/postdetail/post_detail.dart';
+import 'package:halo/screens/profile/controller/profile_controller.dart';
 import 'package:halo/utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 
 import '../../../../constants.dart';
 
@@ -233,6 +235,8 @@ class _PostItemState extends State<PostItem> {
                               setState(() {
                                 isDeleted = true;
                               });
+                              ProfileController profileController = Get.find();
+                              profileController.updateUsesInfo();
                               showSnackBar("Xóa thành công");
                             } else {
                               var jsonResponse = json.decode(value.body);

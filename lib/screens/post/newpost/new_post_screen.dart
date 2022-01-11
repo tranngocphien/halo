@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
+import 'package:halo/screens/profile/controller/profile_controller.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 
 import 'components/image.dart';
 
@@ -147,6 +149,7 @@ class _NewPostState extends State<NewPost> {
   _createPost(String described, List<XFile> imageFileList, XFile? video) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
+    final userId = prefs.getString('userId') ?? "";
     List<String> imagesByte = List<String>.empty(growable: true);
 
     if (imageFileList.isNotEmpty) {
@@ -177,6 +180,8 @@ class _NewPostState extends State<NewPost> {
     var response = await dio.post("/posts/create", data: data);
     if (response.statusCode == 200) {
       print("success");
+      ProfileController profileController = Get.find();
+      await profileController.getListUserPost(userId);
     } else {
       SnackBar snackBar = const SnackBar(
         content: Text('Thêm bài viết không thành công'),

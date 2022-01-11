@@ -29,6 +29,13 @@ class ProfileController extends GetxController {
     super.onInit();
   }
 
+  Future<void> updateUsesInfo() async {
+    isLoading.value = true;
+    await getUserInfo();
+    // getListUserPost();
+    isLoading.value = false;
+  }
+
   Future<void> getUserInfo() async{
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
@@ -43,6 +50,8 @@ class ProfileController extends GetxController {
     ));
     var response = await dio.get('/users/show');
     userInfo.value = UserInfo.fromJson(response.data['data']);
+
+    userBlocked.clear();
 
     for( String userId in userInfo.value!.blockedInbox){
       userBlocked.value.add(await getUserInfoById(userId));
