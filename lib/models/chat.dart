@@ -32,6 +32,7 @@ class Chat {
             gender: "",
             description: "",
             avatar: member[i]['avatar']["fileName"],
+            blockedInbox: [],
             coverImage: ""));
       }
     }
@@ -74,6 +75,7 @@ class Chat {
             phonenumber: "",
             description: "",
             gender: "",
+            blockedInbox: [],
             avatar: mapAvatar[tmp["user"]["avatar"]],
             coverImage: ""),
         content: tmp["content"],
@@ -108,6 +110,7 @@ class Chat {
           phonenumber: "",
           gender: "",
           description: "",
+          blockedInbox: [],
           avatar: other['avatar']["fileName"],
           coverImage: "");
     } else {
@@ -120,6 +123,7 @@ class Chat {
               phonenumber: "",
               gender: "",
               description: "",
+              blockedInbox: [],
               avatar: user['avatar']["fileName"],
               coverImage: "");
         }

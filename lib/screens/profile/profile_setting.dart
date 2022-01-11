@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:halo/screens/profile/change_password_screen.dart';
 import 'package:halo/screens/profile/update_profile_screen.dart';
 import 'package:get/get.dart';
+import 'package:halo/screens/profile/user_block_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,6 +35,15 @@ class ProfileSetting extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => UpdateProfileScreen()));
+            },
+          ),
+          ListTile(
+            title: Text('Danh sách bạn bè đã chặn'),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => UserBlockScreen()));
             },
           ),
           ListTile(

@@ -17,6 +17,7 @@ class ProfileController extends GetxController {
   var dob = DateTime.now().obs;
   var posts = List<PostModel>.empty(growable: true).obs;
   var gender = Gender.male.obs;
+  var userBlocked = List<UserInfo>.empty(growable: true).obs;
 
   @override
   void onInit() async {
@@ -43,7 +44,29 @@ class ProfileController extends GetxController {
     var response = await dio.get('/users/show');
     userInfo.value = UserInfo.fromJson(response.data['data']);
 
+    for( String userId in userInfo.value!.blockedInbox){
+      userBlocked.value.add(await getUserInfoById(userId));
+    }
+
     getListUserPost(UserInfo.fromJson(response.data['data']).id);
+
+
+  }
+
+  Future<UserInfo> getUserInfoById(String userId) async{
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? "";
+
+    var dio = Dio(BaseOptions(
+      baseUrl: urlApi,
+      connectTimeout: 30000,
+      receiveTimeout: 30000,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    ));
+    var response = await dio.get('/users/show/$userId');
+    return UserInfo.fromJson(response.data['data']);
 
   }
 
@@ -107,6 +130,7 @@ class ProfileController extends GetxController {
     var response = await dio.post("/users/edit", data: data);
     if(response.statusCode == 200){
       userInfo.value = UserInfo.fromJson(response.data['data']);
+      isLoading.value = false;
       print("success");
     }
     else {
@@ -123,7 +147,7 @@ class ProfileController extends GetxController {
     };
 
     Map cover_img = {
-      "avatar" : "data:image/jpeg;base64," + base64.encode(imgFile.readAsBytesSync())
+      "cover_img" : "data:image/jpeg;base64," + base64.encode(imgFile.readAsBytesSync())
     };
 
     final prefs = await SharedPreferences.getInstance();
@@ -145,6 +169,37 @@ class ProfileController extends GetxController {
       print("fail");
     }
 
+  }
+
+  Future<void> unBlock(int index) async{
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? "";
+
+    Map data = {
+      "user_id": userBlocked[index].id,
+      "type": "0",
+    };
+
+    var dio = Dio(BaseOptions(
+      baseUrl: urlApi,
+      connectTimeout: 30000,
+      receiveTimeout: 30000,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    ));
+    await dio.post("/users/set-block-user", data: data);
+    userBlocked.removeAt(index);
+
+  }
+
+  bool checkBlocked(String userId){
+    for(String user in userInfo.value!.blockedInbox){
+      if(user == userId){
+        return true;
+      }
+    }
+    return false;
   }
 
 
