@@ -267,19 +267,19 @@ class Comment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProfileController profileController = Get.find();
-    return InkWell(
-      onTap: () {
-        if (profileController.mostComment.value != null) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => PostDetailScreen(
-                    post: profileController.mostComment.value!)),
-          );
-        }
-      },
-      child: Flexible(
-          flex: 1,
+    return Flexible(
+        flex: 1,
+        child: InkWell(
+          onTap: () {
+            if (profileController.mostComment.value != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PostDetailScreen(
+                        post: profileController.mostComment.value!)),
+              );
+            }
+          },
           child: Container(
             height: 80,
             color: Colors.pink[50],
@@ -301,8 +301,8 @@ class Comment extends StatelessWidget {
                 Text("Bài viết nhiều bình luận nhất")
               ],
             ),
-          )),
-    );
+          ),
+        ));
   }
 }
 
