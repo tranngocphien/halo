@@ -74,6 +74,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   style: const TextStyle(fontSize: 20),
                   decoration: const InputDecoration(hintText: "Mật khẩu mới"),
                   obscureText: true,
+
                 ),
                 const SizedBox(
                   height: 20,
@@ -105,13 +106,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
+                        change_password(_currentPasswordController.text,
+                            _passwordController.text);
                         setState(() {
                           _isLoading = true;
                           _errorMsg = "";
                         });
+
                       }
-                      change_password(_currentPasswordController.text,
-                          _passwordController.text);
+
                     },
                     child: const Text(
                       "Đổi mật khẩu",
@@ -146,6 +149,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           _isLoading = false;
         });
         Navigator.pop(context);
+        const snackBar = SnackBar(
+          content: Text('Đổi mật khẩu thành công'),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     } else {
       jsonResponse = json.decode(response.body);

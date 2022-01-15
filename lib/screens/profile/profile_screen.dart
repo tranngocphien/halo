@@ -61,7 +61,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
+import 'package:halo/models/models.dart';
 import 'package:halo/screens/post/newfeed/components/post.dart';
+import 'package:halo/screens/postdetail/post_detail.dart';
 import 'package:halo/screens/profile/controller/profile_controller.dart';
 import 'package:get/get.dart';
 import 'package:halo/screens/profile/profile_setting.dart';
@@ -144,16 +146,16 @@ class ProfileScreen extends StatelessWidget {
     return Obx(() => Scaffold(
         body: profileController.isLoading.value
             ? Center(
-          child: CircularProgressIndicator(),
-        )
+                child: CircularProgressIndicator(),
+              )
             : Obx(() => ListView(
-          // padding: EdgeInsets.fromLTRB(0, 24, 0, 0),
-            children: <Widget>[
-              buildTop(),
-              buildIntro(),
-              ...profileController.posts.value
-                  .map((e) => PostItem(post: e))
-            ]))));
+                    // padding: EdgeInsets.fromLTRB(0, 24, 0, 0),
+                    children: <Widget>[
+                      buildTop(),
+                      buildIntro(),
+                      ...profileController.posts.value
+                          .map((e) => PostItem(post: e))
+                    ]))));
   }
 
   Widget buildTop() {
@@ -208,9 +210,8 @@ class ProfileScreen extends StatelessWidget {
           Text(profileController.userInfo.value!.username,
               style: TextStyle(fontSize: 25), textAlign: TextAlign.center),
           Container(
-            padding: EdgeInsets.all(5),
-            child: Text(profileController.userInfo.value!.description)
-          ),
+              padding: EdgeInsets.all(5),
+              child: Text(profileController.userInfo.value!.description)),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -265,30 +266,43 @@ class Comment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-        flex: 1,
-        child: Container(
-          height: 80,
-          color: Colors.pink[50],
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.message,
-                      color: Colors.yellow[900],
-                    ),
-                    Text("  Bình luận nhiều (1)",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                  ],
+    ProfileController profileController = Get.find();
+    return InkWell(
+      onTap: () {
+        if (profileController.mostComment.value != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PostDetailScreen(
+                    post: profileController.mostComment.value!)),
+          );
+        }
+      },
+      child: Flexible(
+          flex: 1,
+          child: Container(
+            height: 80,
+            color: Colors.pink[50],
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.message,
+                        color: Colors.yellow[900],
+                      ),
+                      Text("  Bình luận nhiều (1)",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                 ),
-              ),
-              Text("Bài viết nhiều bình luận nhất")
-            ],
-          ),
-        ));
+                Text("Bài viết nhiều bình luận nhất")
+              ],
+            ),
+          )),
+    );
   }
 }
 
@@ -299,29 +313,42 @@ class Love extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProfileController profileController = Get.find();
     return Flexible(
         flex: 1,
         fit: FlexFit.tight,
-        child: Container(
-          height: 80,
-          color: Colors.pink[50],
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.favorite,
-                      color: Colors.pink,
-                    ),
-                    Text("  Yêu thích nhất (1)",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                  ],
+        child: InkWell(
+          onTap: () {
+            if (profileController.mostLike.value != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PostDetailScreen(
+                        post: profileController.mostLike.value!)),
+              );
+            }
+          },
+          child: Container(
+            height: 80,
+            color: Colors.pink[50],
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.favorite,
+                        color: Colors.pink,
+                      ),
+                      Text("  Yêu thích nhất (1)",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                 ),
-              ),
-              Text("Ảnh được thả tim nhiều nhất")
-            ],
+                Text("Ảnh được thả tim nhiều nhất")
+              ],
+            ),
           ),
         ));
   }

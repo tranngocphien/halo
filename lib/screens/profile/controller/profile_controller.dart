@@ -16,6 +16,8 @@ class ProfileController extends GetxController {
   var userInfo = Rx<UserInfo?>(null);
   var dob = DateTime.now().obs;
   var posts = List<PostModel>.empty(growable: true).obs;
+  var mostLike = Rx<PostModel?>(null);
+  var mostComment = Rx<PostModel?>(null);
   var gender = Gender.male.obs;
   var userBlocked = List<UserInfo>.empty(growable: true).obs;
 
@@ -106,6 +108,19 @@ class ProfileController extends GetxController {
       //   }
       // }
       posts.reversed;
+      if(posts.isNotEmpty){
+        mostComment.value = posts[0];
+        mostLike.value = posts[0];
+        for(PostModel postModel in posts){
+          if(mostLike.value!.like.length < postModel.like.length){
+            mostLike.value = postModel;
+          }
+          if(mostLike.value!.countComments < postModel.countComments){
+            mostComment.value = postModel;
+          }
+        }
+
+      }
     } else {
 
     }
