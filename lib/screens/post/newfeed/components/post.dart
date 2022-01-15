@@ -10,6 +10,7 @@ import 'package:halo/screens/postdetail/post_detail.dart';
 import 'package:halo/screens/profile/controller/profile_controller.dart';
 import 'package:halo/utils.dart';
 import 'package:http/http.dart' as http;
+import 'package:readmore/readmore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 
@@ -118,13 +119,19 @@ class _PostItemState extends State<PostItem> {
                 const SizedBox(
                   height: 4,
                 ),
-                if (widget.post.content == null)
-                  Container()
-                else
-                  Text(
-                    widget.post.content,
-                    style: const TextStyle(fontSize: 16),
+                ReadMoreText(
+                  widget.post.content,
+                  trimLines: 3,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16
                   ),
+                  trimLength: 40,
+                  colorClickableText: Colors.blue,
+                  trimMode: TrimMode.Line,
+                  trimCollapsedText: '...Xem thêm',
+                  trimExpandedText: ' Thu gọn ',
+                ),
                 const SizedBox(
                   height: 4,
                 ),
@@ -133,7 +140,7 @@ class _PostItemState extends State<PostItem> {
                 ),
                 widget.post.image.isNotEmpty
                     ? GridView.count(
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         crossAxisCount: 2,
                         children: widget.post.image
@@ -229,20 +236,41 @@ class _PostItemState extends State<PostItem> {
                     ),
                     TextButton(
                         onPressed: () {
-                          PostAPI.instance.deletePost(widget.post.id).then((value) {
-                            Navigator.pop(context);
-                            if (value.statusCode == 200) {
-                              setState(() {
-                                isDeleted = true;
-                              });
-                              ProfileController profileController = Get.find();
-                              profileController.updateUsesInfo();
-                              showSnackBar("Xóa thành công");
-                            } else {
-                              var jsonResponse = json.decode(value.body);
-                              showSnackBar(jsonResponse["message"]);
-                            }
-                          });
+
+                          showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Xác nhận xóa bài viết'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: (){
+                                    PostAPI.instance.deletePost(widget.post.id).then((value) {
+                                      Navigator.pop(context);
+                                      if (value.statusCode == 200) {
+                                        setState(() {
+                                          isDeleted = true;
+                                        });
+                                        ProfileController profileController = Get.find();
+                                        profileController.updateUsesInfo();
+                                        Navigator.pop(context);
+                                      showSnackBar("Xóa thành công");
+                                      } else {
+                                        var jsonResponse = json.decode(value.body);
+                                        showSnackBar(jsonResponse["message"]);
+                                      }
+                                    });
+
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+
                         },
                         child: const Text(
                           "Xóa bài viết",

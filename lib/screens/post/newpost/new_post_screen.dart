@@ -64,7 +64,25 @@ class _NewPostState extends State<NewPost> {
             color: primaryColor,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('Bạn có chắc chắn muốn hủy đăng bài viết?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
           },
         ),
         title: const Center(
@@ -80,7 +98,6 @@ class _NewPostState extends State<NewPost> {
                   onPressed: () {
                     _createPost(
                         _contentController.text, _imageFileList, _videoFile);
-                    Navigator.of(context).popAndPushNamed('/main');
                   },
                   child: const Text("Đăng")))
         ],
@@ -177,18 +194,29 @@ class _NewPostState extends State<NewPost> {
         'Authorization': 'Bearer $token',
       },
     ));
-    var response = await dio.post("/posts/create", data: data);
-    if (response.statusCode == 200) {
-      print("success");
-      ProfileController profileController = Get.find();
-      await profileController.getListUserPost(userId);
-    } else {
+
+    try {
+      var response = await dio.post("/posts/create", data: data);
+      if (response.statusCode == 200) {
+        const snackBar = SnackBar(
+          content: Text('Đăng bài thành công'),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Navigator.of(context).popAndPushNamed('/main');
+        ProfileController profileController = Get.find();
+        await profileController.getListUserPost(userId);
+      } else {
+
+      }
+
+    } on DioError catch (e){
       SnackBar snackBar = const SnackBar(
         content: Text('Thêm bài viết không thành công'),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
     }
+
   }
-
-
 }

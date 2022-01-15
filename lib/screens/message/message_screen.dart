@@ -9,6 +9,8 @@ import 'package:halo/screens/profile/controller/profile_controller.dart';
 import 'package:halo/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:dart_emoji/dart_emoji.dart';
+
 
 class MessageScreen extends StatefulWidget {
   final Chat chat;
@@ -189,6 +191,9 @@ class _MessageScreenState extends State<MessageScreen> {
     MessageFirebaseModel messageFirebaseModel = MessageFirebaseModel.fromJson(document!);
     print(messageFirebaseModel.timestamp);
 
+    var parser = EmojiParser();
+
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -209,7 +214,7 @@ class _MessageScreenState extends State<MessageScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  messageFirebaseModel.content,
+                  parser.emojify(messageFirebaseModel.content),
                   style: const TextStyle(
                     fontSize: 14,
                   ),
