@@ -65,86 +65,120 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
               'Chặn người này',
               style: TextStyle(color: Colors.red),
             ),
-            onTap: () async {
+            onTap: () {
 
-              final prefs = await SharedPreferences.getInstance();
+              showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text('Thông báo'),
+                  content: Text('Bạn có thực sự muốn chặn ${widget.userInfo.username}'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'Cancel'),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        final prefs = await SharedPreferences.getInstance();
 
-              final token = prefs.getString('token') ?? "";
+                        final token = prefs.getString('token') ?? "";
 
-              String userId = prefs.getString('userId') ?? "";
+                        String userId = prefs.getString('userId') ?? "";
 
-              //print(token);
-              Map data = {"user_id": widget.userInfo.id, "type": '1'};
+                        //print(token);
+                        Map data = {"user_id": widget.userInfo.id, "type": '1'};
 
-              //print(data);
+                        //print(data);
 
-              final response = await http.post(
-                  Uri.parse('${urlApi}/users/set-block-user'),
-                  headers: {
-                    HttpHeaders.authorizationHeader: 'Bearer $token'
-                  },
-                  body: data);
-              int code = response.statusCode;
-              print(response.body);
+                        final response = await http.post(
+                            Uri.parse('${urlApi}/users/set-block-user'),
+                            headers: {
+                              HttpHeaders.authorizationHeader: 'Bearer $token'
+                            },
+                            body: data);
+                        int code = response.statusCode;
+                        print(response.body);
 
-              if (code == 200) {
-                setState(() {
-                  isBlock = true;
-                  profileController.getUserInfo();
-                  SnackBar snackBar = SnackBar(
-                    content: Text('Chặn ${widget.userInfo.username} thành công'),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                });
-              } else {
-                SnackBar snackBar = SnackBar(
-                  content: Text('Bỏ chặn ${widget.userInfo.username} thất bại'),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              }
+                        if (code == 200) {
+                          setState(() {
+                            isBlock = true;
+                            profileController.getUserInfo();
+                            SnackBar snackBar = SnackBar(
+                              content: Text('Chặn ${widget.userInfo.username} thành công'),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          });
+                        } else {
+                          SnackBar snackBar = SnackBar(
+                            content: Text('Bỏ chặn ${widget.userInfo.username} thất bại'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
+                        Navigator.pop(context, 'OK');
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              );
             },
           ) : ListTile(
             title: Text(
               'Bỏ chặn người này',
               style: TextStyle(color: Colors.red),
             ),
-            onTap: () async {
+            onTap: () {
 
-              final prefs = await SharedPreferences.getInstance();
+              showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text('Thông báo'),
+                  content: Text('Bạn có muốn bỏ chặn ${widget.userInfo.username}'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'Cancel'),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        final prefs = await SharedPreferences.getInstance();
 
-              final token = prefs.getString('token') ?? "";
+                        final token = prefs.getString('token') ?? "";
 
-              String userId = prefs.getString('userId') ?? "";
+                        String userId = prefs.getString('userId') ?? "";
 
-              //print(token);
-              Map data = {"user_id": widget.userInfo.id, "type": '0'};
+                        //print(token);
+                        Map data = {"user_id": widget.userInfo.id, "type": '0'};
 
-              //print(data);
+                        //print(data);
 
-              final response = await http.post(
-                  Uri.parse('${urlApi}/users/set-block-user'),
-                  headers: {
-                    HttpHeaders.authorizationHeader: 'Bearer $token'
-                  },
-                  body: data);
-              int code = response.statusCode;
-              print(response.body);
+                        final response = await http.post(
+                        Uri.parse('${urlApi}/users/set-block-user'), headers: { HttpHeaders.authorizationHeader: 'Bearer $token' }, body: data);
+                        int code = response.statusCode;
+                        print(response.body);
 
-              if (code == 200) {
-                setState(() {
-                  isBlock = false;
-                  profileController.getUserInfo();
-                  SnackBar snackBar = SnackBar(
-                    content: Text('Bỏ chặn ${widget.userInfo.username} thành công'),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                });
-              } else {
-                SnackBar snackBar = SnackBar(
-                  content: Text('Bỏ chặn ${widget.userInfo.username} thất bại'),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              }
+                        if (code == 200) {
+                        setState(() {
+                        isBlock = false;
+                        profileController.getUserInfo();
+                        SnackBar snackBar = SnackBar(
+                        content: Text('Bỏ chặn ${widget.userInfo.username} thành công'),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        });
+                        } else {
+                        SnackBar snackBar = SnackBar(
+                        content: Text('Bỏ chặn ${widget.userInfo.username} thất bại'),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
+                        Navigator.pop(context, 'OK');
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              );
             },
           )
           ,

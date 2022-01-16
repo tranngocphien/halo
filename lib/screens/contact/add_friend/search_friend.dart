@@ -5,7 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:halo/models/user_info.dart';
 import 'package:halo/screens/contact/add_friend/components/friend_component.dart';
-
+import 'package:halo/screens/contact/controller/friend_controller.dart';
+import 'package:get/get.dart';
 import '../../../constants.dart';
 import '../contact_screen.dart';
 import 'package:http/http.dart' as http;
@@ -25,6 +26,8 @@ class _SearchFriend extends State<SearchFriendScreen> {
   bool loading = false;
 
    late Future<List<UserInfo>> futureSearchFriend;
+
+   FriendController friendController = Get.find();
 
   @override
   void initState() {
@@ -77,12 +80,10 @@ class _SearchFriend extends State<SearchFriendScreen> {
                     child: RaisedButton (
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       onPressed: () async {
-                        print(_phoneNumber.text);
-
+                        friendController.getListFriend();
                         setState(() {
                           loading = true;
                         });
-
                         futureSearchFriend = fetchSearchFriends(_phoneNumber.text).whenComplete(() => setState(() {
                           loading = false;
                         }));
@@ -90,8 +91,6 @@ class _SearchFriend extends State<SearchFriendScreen> {
                           //   futureSearchFriend = future;
                           //   //loading = false;
                           // });
-
-
                       },
                       child: const Text("Tìm", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500)),
                       color: primaryColor,
