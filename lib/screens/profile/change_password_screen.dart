@@ -65,6 +65,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   decoration:
                       const InputDecoration(hintText: "Mật khẩu hiện tại"),
                   obscureText: true,
+                  validator: (value){
+                    if(value!.isEmpty){
+                      return "Không được để trống";
+                    }
+                  },
                 ),
                 const SizedBox(
                   height: 20,
@@ -74,6 +79,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   style: const TextStyle(fontSize: 20),
                   decoration: const InputDecoration(hintText: "Mật khẩu mới"),
                   obscureText: true,
+                  validator: (value){
+                    if(value!.isEmpty){
+                      return "Không được để trống";
+                    }
+                  },
 
                 ),
                 const SizedBox(
@@ -88,6 +98,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   validator: (value) {
                     if (value != _passwordController.text) {
                       return "Nhập lại mật khẩu không đúng";
+                    }
+                    if(value!.isEmpty){
+                      return "Không được để trống";
                     }
                   },
                 ),
