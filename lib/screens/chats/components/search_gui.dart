@@ -28,47 +28,49 @@ class _SearchGUIState extends State<SearchGUI> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 1, // length of tabs
-      initialIndex: 0,
-      child: Column(
-        // crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.only(left: 10),
-            decoration: const BoxDecoration(
-              color: whiteColor,
+    return SingleChildScrollView(
+      child: DefaultTabController(
+        length: 1, // length of tabs
+        initialIndex: 0,
+        child: Column(
+          // crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: const EdgeInsets.only(left: 10),
+              decoration: const BoxDecoration(
+                color: whiteColor,
+              ),
+              child: const Align(
+                alignment: Alignment.centerLeft,
+                child: TabBar(
+                  isScrollable: true,
+                  labelColor: Colors.black,
+                  unselectedLabelColor: subtitleColor,
+                  tabs: [
+                    Tab(text: 'TẤT CẢ'),
+                  ],
+                ),
+              ),
             ),
-            child: const Align(
-              alignment: Alignment.centerLeft,
-              child: TabBar(
-                isScrollable: true,
-                labelColor: Colors.black,
-                unselectedLabelColor: subtitleColor,
-                tabs: [
-                  Tab(text: 'TẤT CẢ'),
+            Container(
+              height: 600,
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: Colors.grey,
+                    width: 0.5,
+                  ),
+                ),
+                color: whiteColor,
+              ),
+              child: TabBarView(
+                children: [
+                  buildContactSearch(),
                 ],
               ),
             ),
-          ),
-          Container(
-            height: 600,
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color: Colors.grey,
-                  width: 0.5,
-                ),
-              ),
-              color: whiteColor,
-            ),
-            child: TabBarView(
-              children: [
-                buildContactSearch(),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

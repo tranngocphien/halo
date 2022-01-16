@@ -367,6 +367,8 @@ class _PostItemState extends State<PostItem> {
                                 TextButton(
                                   onPressed: () {
                                     PostAPI.instance.reportPost(widget.post.id, subjectCtrl.text, detailCtrl.text);
+                                    Navigator.pop(context);
+                                    showSnackBar("Báo cáo thành công");
                                   },
                                   child: const Text('OK'),
                                 ),
@@ -383,33 +385,6 @@ class _PostItemState extends State<PostItem> {
                 ),
                 const Divider(
                   thickness: 2,
-                ),
-                Row(
-                  children: [
-                    const Icon(Icons.delete),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    TextButton(
-                        onPressed: () {
-                          PostAPI.instance.deletePost(widget.post.id).then((value) {
-                            Navigator.pop(context);
-                            if (value.statusCode == 200) {
-                              setState(() {
-                                isDeleted = true;
-                              });
-                              showSnackBar("Xóa thành công");
-                            } else {
-                              var jsonResponse = json.decode(value.body);
-                              showSnackBar(jsonResponse["message"]);
-                            }
-                          });
-                        },
-                        child: const Text(
-                          "Chặn người dùng",
-                          style: TextStyle(fontSize: 20, color: Colors.black),
-                        )),
-                  ],
                 ),
               ],
             ));
