@@ -71,7 +71,7 @@ class Chat {
         sender: UserInfo(
             id: tmp["user"]["_id"],
             username: tmp["user"]["username"],
-            phonenumber: "",
+            phonenumber: tmp["user"]["phonenumber"],
             description: "",
             gender: "",
             avatar: mapAvatar[tmp["user"]["avatar"]],

@@ -80,7 +80,8 @@ List<UserInfo> parseFriends(final respond, searchValue) {
 
   for (var i = 0; i < respond.length; i++) {
     var username = TiengViet.parse(respond[i]["username"].toLowerCase());
-    if (username.split(" ").length < splitedSearchText.length) {
+    var phonenumber = respond[i]["phonenumber"];
+    if ((username.split(" ").length < splitedSearchText.length)) {
       continue;
     } else {
       var j = 0;
@@ -89,6 +90,10 @@ List<UserInfo> parseFriends(final respond, searchValue) {
       }
       if (j == splitedSearchText.length) {
         // print(respond[i]);
+        parsedMatch.add(UserInfo.fromJson(respond[i]));
+      }
+      if (splitedSearchText.length == 1 &&
+          phonenumber.contains(splitedSearchText[0])) {
         parsedMatch.add(UserInfo.fromJson(respond[i]));
       }
     }
