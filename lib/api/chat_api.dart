@@ -41,12 +41,13 @@ Future<List<Chat>> fetchChats() async {
 
 List<Chat> parseChats(dynamic responseBody) {
   final chats = json.decode(responseBody)["chat"].cast<Map<String, dynamic>>();
+  final messagesList = json.decode(responseBody)["message"];
+  List<Chat> result = [];
 
-  List<Chat> result = chats.map<Chat>((json) => Chat.fromJson(json)).toList();
-  print("Chat ID");
-  for(Chat chat in result){
-    print(chat.id);
+  for (var i = 0; i < chats.length; i++) {
+    result.add(Chat.fromJson(chats[i], messagesList[i]));
   }
+
   return result;
 }
 
@@ -81,7 +82,7 @@ dynamic createGroupChat(info) async {
   if (response.statusCode == 200) {
     final result = await json.decode(response.body)["data"];
     SearchData.groupChatList.add(result);
-    Chat groupChat = Chat.fromJson(result);
+    Chat groupChat = Chat.fromJson(result, []);
     SearchData.cached_chat.add(groupChat);
     // SearchData.cached_chat.add
     return groupChat;

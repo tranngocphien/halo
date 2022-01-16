@@ -11,6 +11,8 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import 'component/setting_user_profile.dart';
+
 class UserProfileScreen extends StatefulWidget {
   final UserInfo userInfo;
   UserProfileScreen({Key? key, required this.userInfo}) : super(key: key);
@@ -99,7 +101,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         width: double.infinity,
         height: coverHeight,
       ),
-
+      Button(
+        userInfo: widget.userInfo,
+      ),
+      IconButton(
+        alignment: Alignment.topLeft,
+        onPressed: (){
+          Navigator.pop(context);
+        },
+        icon: const Icon(Icons.arrow_back),
+        color: Colors.white,
+      ),
     ],
   );
 
@@ -237,6 +249,39 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       )
     ],
   );
+}
+
+class Button extends StatelessWidget {
+  final UserInfo userInfo;
+  const Button({
+    Key? key,
+    required this.userInfo,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      right: 15,
+      child: IconButton(
+        icon: const Icon(
+          Icons.more_horiz,
+          size: 36,
+        ),
+        color: Colors.white,
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>SettingUserProfile(
+                    userInfo: userInfo,
+                  )));
+          // Navigator.pushNamed(context, '/newpost');
+          // print("Hello");
+        },
+        // size: 40,
+      ),
+    );
+  }
 }
 
 Future<List<PostModel>> fetchPost(String userId) async {

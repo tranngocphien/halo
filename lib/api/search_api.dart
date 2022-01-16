@@ -39,9 +39,6 @@ Future<List<Map<String, dynamic>>> fetchGroupChats() async {
     if (response.statusCode == 200) {
       final result =
           json.decode(response.body)["chat"].cast<Map<String, dynamic>>();
-      // SearchData.groupChatList = await result.map((groupChat) {
-      //   return Chat.fromJson(result);
-      // }).toList();
       SearchData.groupChatList = await result;
       return result;
     } else {
@@ -118,8 +115,11 @@ List<Chat> parseGroupChats(final respond, searchValue) {
 
     nameList.removeWhere((value) => value == "");
 
-    for (var j = 0; j < nameList.length; j++) {
-      var username = TiengViet.parse(nameList[j].toLowerCase());
+    for (var j = 0; j <= nameList.length; j++) {
+      var username = j == nameList.length
+          ? TiengViet.parse(respond[i]["name"].toLowerCase())
+          : TiengViet.parse(nameList[j].toLowerCase());
+
       if (username.split(" ").length < splitedSearchText.length) {
         continue;
       } else {
@@ -195,7 +195,7 @@ Future<Chat> fetchChat(String friendId) async {
 
   if (response.statusCode == 200) {
     final result = await json.decode(response.body)["data"];
-    var res = Chat.fromJson(json);
+    var res = Chat.fromJson(json, []);
     SearchData.cached_chat.add(res);
     return res;
   } else {

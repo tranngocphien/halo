@@ -3,9 +3,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:halo/data/data.dart';
 import 'package:halo/screens/profile/change_password_screen.dart';
 import 'package:halo/screens/profile/update_profile_screen.dart';
 import 'package:get/get.dart';
+import 'package:halo/screens/profile/user_block_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,6 +36,15 @@ class ProfileSetting extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => UpdateProfileScreen()));
+            },
+          ),
+          ListTile(
+            title: Text('Danh sách bạn bè đã chặn'),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => UserBlockScreen()));
             },
           ),
           ListTile(
@@ -84,8 +95,13 @@ class ProfileSetting extends StatelessWidget {
               prefs.remove('userId');
               Get.delete<ProfileController>();
               prefs.clear();
+              SearchData.cached_chat.clear();
+              SearchData.friendList.clear();
+              SearchData.groupChatList.clear();
+              SearchData.searched_chat.clear();
+              SearchData.searched_word.clear();
               Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+                  .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
             },
           ),
         ],

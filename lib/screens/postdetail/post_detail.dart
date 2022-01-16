@@ -6,6 +6,7 @@ import 'package:halo/components/circle_avatar.dart';
 import 'package:halo/constants.dart';
 import 'package:halo/models/comment.dart';
 import 'package:halo/models/post.dart';
+import 'package:halo/utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -73,7 +74,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 ),
                                 Row(children: [
                                   Text(
-                                    "10 phút",
+                                    DateTimeConverter.durationToNow(widget.post.createAt),
                                     style: TextStyle(
                                         color: Colors.grey[500], fontSize: 12),
                                   ),
@@ -90,27 +91,25 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             ),
                           ],
                         ),
-                        IconButton(
-                            onPressed: () {}, icon: Icon(Icons.more_horiz))
                       ],
                     ),
                     const SizedBox(
                       height: 16,
                     ),
                     Text(
-                      "${widget.post.content}",
-                      style: TextStyle(fontSize: 20),
+                      widget.post.content,
+                      style: const TextStyle(fontSize: 20),
                     ),
                     const SizedBox(
                       height: 16,
                     ),
                     widget.post.image.isNotEmpty?
                     GridView.count(
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       crossAxisCount: 2,
                       children: widget.post.image
-                          .map((e) => Image.network("${urlFiles}/${e.name}"))
+                          .map((e) => Image.network("$urlFiles/${e.name}"))
                           .toList(),
                     ): Container(),
                     // Image.asset("assets/images/profile_avatar.jpg"),
@@ -136,7 +135,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           width: 10,
                         ),
                         Text(
-                          "${countLike}",
+                          "$countLike",
                           style: const TextStyle(fontSize: 16),
                         ),
                       ],
@@ -144,26 +143,24 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     const Divider(
                       thickness: 1,
                     ),
-                    //Text("Hãy là người đầu tiên bình luận"),
                     FutureBuilder<List<CommentModel>>(
                       future: futureComment,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           List<CommentModel>? listComment = snapshot.data;
-                          return Column(
+                          return listComment!.isEmpty? const Text("Hãy là người đầu tiên bình luận") : Column(
                             children: [
-                              ...listComment!.map((comment){
+                              ...listComment.map((comment){
                                 return CommentContent(comment: comment,);
                               } ).toList(),
                             ],
                           );
                         } else if (snapshot.hasError) {
-                          return Text('${snapshot.error}');
+                          return const Text("Hãy là người đầu tiên bình luận");
                         }
                         else {
-                          return Text("Hãy là người đầu tiên bình luận");
+                          return const Text("Hãy là người đầu tiên bình luận");
                         }
-                        return const CircularProgressIndicator();
                       },
                     ),
                   ],

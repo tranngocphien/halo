@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
+import 'package:halo/models/user_info.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 
 class RegisterScreen extends StatefulWidget {
@@ -59,7 +62,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _phoneController,
                   style: const TextStyle(fontSize: 20),
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(hintText: "Số điện thoại"),
+                  decoration: const InputDecoration(hintText: "Số điện thoại"),
+                  validator: (value){
+                    if(value!.isEmpty){
+                      return "Không được để trống";
+                    }
+                  },
                 ),
                 const SizedBox(
                   height: 10,
@@ -67,7 +75,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _usernameController,
                   style: const TextStyle(fontSize: 20),
-                  decoration: InputDecoration(hintText: "Tên tài khoản"),
+                  decoration: const InputDecoration(hintText: "Tên tài khoản"),
+                  validator: (value){
+                    if(value!.isEmpty){
+                      return "Không được để trống";
+                    }
+                  },
                 ),
                 const SizedBox(
                   height: 10,
@@ -77,6 +90,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   style: const TextStyle(fontSize: 20),
                   decoration: const InputDecoration(hintText: "Mật khẩu"),
                   obscureText: true,
+                  validator: (value){
+                    if(value!.length < 6){
+                      return "Độ dài mật khẩu phải lớn hơn 6";
+                    }
+                  },
                 ),
                 const SizedBox(
                   height: 20,
@@ -144,7 +162,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         setState(() {
           _isLoading = false;
         });
-        Navigator.pushNamed(context, "/login");
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('token', jsonResponse['token']);
+        prefs.setString('userId', jsonResponse['data']['id']);
+        UserInfo.userId = jsonResponse['data']['id'];
+
+        Navigator.pushNamed(context, "/main");
+        // Navigator.pushNamed(context, "/login");
       }
     }
     else {

@@ -32,6 +32,7 @@ class Chat {
             gender: "",
             description: "",
             avatar: member[i]['avatar']["fileName"],
+            blockedInbox: [],
             coverImage: ""));
       }
     }
@@ -40,15 +41,16 @@ class Chat {
       id: chat['_id'],
       chatName: chat['name'],
       partner: partner,
-      message: [MessageModel.fromContent("Thành viên: $username")],
+      message: username.toLowerCase() == chat['name'].toLowerCase()
+          ? [MessageModel.fromContent("Nhóm chat: $username")]
+          : [MessageModel.fromContent("Thành viên: $username")],
       isMuted: false,
       isPined: false,
     );
   }
 
-  factory Chat.fromJson(json) {
+  factory Chat.fromJson(json, messages) {
     final chat = json;
-    final messages = chat['message'];
     String chatName = "";
     dynamic partner;
 
@@ -66,6 +68,7 @@ class Chat {
           DateTime.parse(tmp["createdAt"]).add(const Duration(hours: 7));
       DateTime updatedAt =
           DateTime.parse(tmp["createdAt"]).add(const Duration(hours: 7));
+
       message.add(MessageModel(
         id: tmp["_id"],
         sender: UserInfo(
@@ -74,7 +77,8 @@ class Chat {
             phonenumber: tmp["user"]["phonenumber"],
             description: "",
             gender: "",
-            avatar: mapAvatar[tmp["user"]["avatar"]],
+            blockedInbox: [],
+            avatar: "60c39f54f0b2c4268eb53367",
             coverImage: ""),
         content: tmp["content"],
         createdAt: DateTime(
@@ -108,6 +112,7 @@ class Chat {
           phonenumber: "",
           gender: "",
           description: "",
+          blockedInbox: [],
           avatar: other['avatar']["fileName"],
           coverImage: "");
     } else {
@@ -120,6 +125,7 @@ class Chat {
               phonenumber: "",
               gender: "",
               description: "",
+              blockedInbox: [],
               avatar: user['avatar']["fileName"],
               coverImage: "");
         }

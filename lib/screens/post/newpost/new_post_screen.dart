@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:halo/constants.dart';
+import 'package:halo/screens/profile/controller/profile_controller.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 
 import 'components/image.dart';
 
@@ -62,7 +64,25 @@ class _NewPostState extends State<NewPost> {
             color: primaryColor,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('Bạn có chắc chắn muốn hủy đăng bài viết?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
           },
         ),
         title: const Center(
@@ -78,24 +98,23 @@ class _NewPostState extends State<NewPost> {
                   onPressed: () {
                     _createPost(
                         _contentController.text, _imageFileList, _videoFile);
-                    Navigator.of(context).popAndPushNamed('/main');
                   },
-                  child: Text("Đăng")))
+                  child: const Text("Đăng")))
         ],
       ),
       body: Column(
         children: [
           Expanded(
               child: Container(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
                 TextField(
                   controller: _contentController,
                   keyboardType: TextInputType.multiline,
                   maxLines: 10,
-                  style: TextStyle(fontSize: 20),
-                  decoration: InputDecoration(
+                  style: const TextStyle(fontSize: 20),
+                  decoration: const InputDecoration(
                       border: InputBorder.none, hintText: "Bạn đang nghĩ gì"),
                 ),
                 Expanded(
@@ -131,12 +150,12 @@ class _NewPostState extends State<NewPost> {
                   onPressed: () {
                     _pickImage();
                   },
-                  icon: Icon(Icons.image)),
+                  icon: const Icon(Icons.image)),
               IconButton(
                   onPressed: () {
                     _pickVideo();
                   },
-                  icon: Icon(Icons.video_collection))
+                  icon: const Icon(Icons.video_collection))
             ],
           )
         ],
@@ -147,6 +166,7 @@ class _NewPostState extends State<NewPost> {
   _createPost(String described, List<XFile> imageFileList, XFile? video) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
+    final userId = prefs.getString('userId') ?? "";
     List<String> imagesByte = List<String>.empty(growable: true);
 
     if (imageFileList.isNotEmpty) {
@@ -174,11 +194,29 @@ class _NewPostState extends State<NewPost> {
         'Authorization': 'Bearer $token',
       },
     ));
-    var response = await dio.post("/posts/create", data: data);
-    if (response.statusCode == 200) {
-      print("success");
-    } else {
-      print("failed");
+
+    try {
+      var response = await dio.post("/posts/create", data: data);
+      if (response.statusCode == 200) {
+        const snackBar = SnackBar(
+          content: Text('Đăng bài thành công'),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Navigator.of(context).popAndPushNamed('/main');
+        ProfileController profileController = Get.find();
+        await profileController.getListUserPost(userId);
+      } else {
+
+      }
+
+    } on DioError catch (e){
+      SnackBar snackBar = const SnackBar(
+        content: Text('Thêm bài viết không thành công'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
     }
+
   }
 }

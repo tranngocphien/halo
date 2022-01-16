@@ -6,6 +6,7 @@ class UserInfo {
   late String description;
   late String avatar;
   late String coverImage;
+  late List<String> blockedInbox;
   late String id;
 
   UserInfo({
@@ -15,6 +16,7 @@ class UserInfo {
     required this.description,
     required this.avatar,
     required this.coverImage,
+    required this.blockedInbox,
     required this.id,
   });
 
@@ -27,6 +29,7 @@ class UserInfo {
         avatar: json['avatar']['fileName'] ?? '',
         coverImage:
             json['cover_image'] == null ? '' : json['cover_image']['fileName'],
+        blockedInbox: (json['blocked_inbox'] as List).map((e) => e.toString()).toList(),
         id: json['_id']);
   }
 
@@ -37,5 +40,6 @@ class UserInfo {
       description: "",
       avatar: "",
       coverImage: "",
+      blockedInbox: [],
       id: "");
 }
