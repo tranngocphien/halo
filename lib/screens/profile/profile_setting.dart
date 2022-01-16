@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:halo/constants.dart';
 import 'package:halo/data/data.dart';
 import 'package:halo/screens/profile/change_password_screen.dart';
 import 'package:halo/screens/profile/update_profile_screen.dart';
@@ -24,6 +25,7 @@ class ProfileSetting extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: primaryColor,
         title: Text(username),
       ),
       body: ListView(

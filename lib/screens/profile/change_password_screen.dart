@@ -83,6 +83,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     if(value!.isEmpty){
                       return "Không được để trống";
                     }
+                    else {
+                      if(value.length < 6){
+                        return "Độ dài mật khẩu phải lớn hơn 6";
+                      }
+                    }
                   },
 
                 ),
