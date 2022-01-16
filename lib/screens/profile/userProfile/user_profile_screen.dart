@@ -103,8 +103,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       ),
       Button(
         userInfo: widget.userInfo,
-      )
-
+      ),
+      IconButton(
+        alignment: Alignment.topLeft,
+        onPressed: (){
+          Navigator.pop(context);
+        },
+        icon: const Icon(Icons.arrow_back),
+        color: Colors.white,
+      ),
     ],
   );
 
