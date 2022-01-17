@@ -106,129 +106,131 @@ class _CreateGroupState extends State<CreateGroup> {
           ]),
       body: Container(
         padding: const EdgeInsets.all(10),
-        child: Column(children: [
-          Container(
-            margin: const EdgeInsets.only(bottom: 10, left: 5, right: 5),
-            child: TextField(
-              controller: _groupNameController,
-              style: const TextStyle(fontSize: mediumSize),
-              decoration: const InputDecoration(
-                isDense: true,
-                hintText: "Tên nhóm (bắt buộc)",
-                hintStyle: TextStyle(
-                  fontSize: smallSize,
-                  color: subtitleColor,
-                ),
-              ),
-            ),
-          ),
-          Container(
-            height: 40,
-            padding: const EdgeInsets.only(left: 15, bottom: 4),
-            decoration: const BoxDecoration(
-              color: iconslightColor,
-              borderRadius: BorderRadius.all(Radius.circular(6)),
-            ),
-            child: TextField(
-              onChanged: (text) {
-                setState(() {});
-              },
-              controller: _searchWordController,
-              style: const TextStyle(fontSize: mediumSize),
-              decoration: InputDecoration(
+        child: SingleChildScrollView(
+          child: Column(children: [
+            Container(
+              margin: const EdgeInsets.only(bottom: 10, left: 5, right: 5),
+              child: TextField(
+                controller: _groupNameController,
+                style: const TextStyle(fontSize: mediumSize),
+                decoration: const InputDecoration(
                   isDense: true,
-                  icon: Container(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: const Icon(Search.search)),
-                  hintText: "Tìm tên hoặc số điện thoại",
-                  border: InputBorder.none,
-                  hintStyle: const TextStyle(
+                  hintText: "Tên nhóm (bắt buộc)",
+                  hintStyle: TextStyle(
                     fontSize: smallSize,
                     color: subtitleColor,
                   ),
-                  suffixIcon: _searchWordController.text.isNotEmpty
-                      ? IconButton(
-                          onPressed: () {
-                            _searchWordController.clear();
-                            setState(() {});
-                          },
-                          icon: const Icon(Icons.cancel, color: Colors.black))
-                      : null),
-            ),
-          ),
-          DefaultTabController(
-            length: 2, // length of tabs
-            initialIndex: 0,
-            child: Column(
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    color: whiteColor,
-                  ),
-                  child: TabBar(
-                    isScrollable: true,
-                    labelColor: Colors.black,
-                    unselectedLabelColor: subtitleColor,
-                    tabs: [
-                      SizedBox(
-                        width: width / 3,
-                        child: const Tab(text: 'GẦN ĐÂY'),
-                      ),
-                      SizedBox(
-                        width: width / 3,
-                        child: const Tab(text: 'BẠN BÈ'),
-                      ),
-                    ],
-                  ),
                 ),
-                Container(
-                  height: 500,
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      top: BorderSide(
-                        color: Colors.grey,
-                        width: 0.5,
-                      ),
+              ),
+            ),
+            Container(
+              height: 40,
+              padding: const EdgeInsets.only(left: 15, bottom: 4),
+              decoration: const BoxDecoration(
+                color: iconslightColor,
+                borderRadius: BorderRadius.all(Radius.circular(6)),
+              ),
+              child: TextField(
+                onChanged: (text) {
+                  setState(() {});
+                },
+                controller: _searchWordController,
+                style: const TextStyle(fontSize: mediumSize),
+                decoration: InputDecoration(
+                    isDense: true,
+                    icon: Container(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: const Icon(Search.search)),
+                    hintText: "Tìm tên hoặc số điện thoại",
+                    border: InputBorder.none,
+                    hintStyle: const TextStyle(
+                      fontSize: smallSize,
+                      color: subtitleColor,
                     ),
-                    color: whiteColor,
-                  ),
-                  child: TabBarView(
-                    children: [
-                      Container(height: 0),
-                      SearchData.friendList.isNotEmpty
-                          ? buildListTile(SearchData.friendList)
-                          : FutureBuilder<List<Map<String, dynamic>>>(
-                              future: fetchFriends(),
-                              builder: (context, snapshot) {
-                                switch (snapshot.connectionState) {
-                                  case ConnectionState.waiting:
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  default:
-                                    if (snapshot.hasError) {
-                                      return Container(
-                                        color: Colors.black,
-                                        alignment: Alignment.center,
-                                        child: const Text(
-                                          'Something went wrong!',
-                                          style: TextStyle(
-                                              fontSize: 28,
-                                              color: Colors.white),
-                                        ),
-                                      );
-                                    } else {
-                                      return buildListTile(snapshot.data!);
-                                    }
-                                }
-                              },
-                            ),
-                    ],
-                  ),
-                ),
-              ],
+                    suffixIcon: _searchWordController.text.isNotEmpty
+                        ? IconButton(
+                            onPressed: () {
+                              _searchWordController.clear();
+                              setState(() {});
+                            },
+                            icon: const Icon(Icons.cancel, color: Colors.black))
+                        : null),
+              ),
             ),
-          ),
-        ]),
+            DefaultTabController(
+              length: 2, // length of tabs
+              initialIndex: 0,
+              child: Column(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: whiteColor,
+                    ),
+                    child: TabBar(
+                      isScrollable: true,
+                      labelColor: Colors.black,
+                      unselectedLabelColor: subtitleColor,
+                      tabs: [
+                        SizedBox(
+                          width: width / 3,
+                          child: const Tab(text: 'GẦN ĐÂY'),
+                        ),
+                        SizedBox(
+                          width: width / 3,
+                          child: const Tab(text: 'BẠN BÈ'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 500,
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        top: BorderSide(
+                          color: Colors.grey,
+                          width: 0.5,
+                        ),
+                      ),
+                      color: whiteColor,
+                    ),
+                    child: TabBarView(
+                      children: [
+                        Container(height: 0),
+                        SearchData.friendList.isNotEmpty
+                            ? buildListTile(SearchData.friendList)
+                            : FutureBuilder<List<Map<String, dynamic>>>(
+                                future: fetchFriends(),
+                                builder: (context, snapshot) {
+                                  switch (snapshot.connectionState) {
+                                    case ConnectionState.waiting:
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    default:
+                                      if (snapshot.hasError) {
+                                        return Container(
+                                          color: Colors.black,
+                                          alignment: Alignment.center,
+                                          child: const Text(
+                                            'Something went wrong!',
+                                            style: TextStyle(
+                                                fontSize: 28,
+                                                color: Colors.white),
+                                          ),
+                                        );
+                                      } else {
+                                        return buildListTile(snapshot.data!);
+                                      }
+                                  }
+                                },
+                              ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ]),
+        ),
       ),
     );
   }
