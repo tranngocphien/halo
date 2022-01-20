@@ -56,6 +56,8 @@ class Chat {
 
     final member = chat['member'];
 
+    print(json);
+
     var mapAvatar = member
         .map((user) => {user['avatar']['_id']: user['avatar']['fileName']});
     mapAvatar = mapAvatar.reduce((map1, map2) => map1..addAll(map2));
